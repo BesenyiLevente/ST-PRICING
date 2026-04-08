@@ -1,0 +1,2675 @@
+<!DOCTYPE html>
+
+<html lang="hu">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ST Pricing Tool</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+
+  --bg:#06080f;--bg2:#0a0e1a;--bg3:#0f1422;--bg4:#141c30;
+
+  --border:#181f30;--border2:#1e2840;--border3:#2a3a5a;
+
+  --text:#a8b8d0;--text2:#4a5878;--text3:#2a3550;
+
+  --white:#ccd8ee;--bright:#e8f0ff;
+
+  --accent:#4a5cf0;--accent2:#6878f5;
+
+  --green:#22c55e;--yellow:#f59e0b;--red:#ef4444;--orange:#f97316;--purple:#a855f7;
+
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{height:100%}
+
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100%;display:flex;flex-direction:column}
+
+::-webkit-scrollbar{width:4px;height:4px}
+
+::-webkit-scrollbar-track{background:transparent}
+
+::-webkit-scrollbar-thumb{background:var(--border3);border-radius:2px}
+
+input,textarea,button,select{font-family:inherit;box-sizing:border-box}
+
+input:focus,textarea:focus,select:focus{outline:none}
+
+button{cursor:pointer;transition:all .13s}
+
+ 
+
+/* ══ TOPBAR ══ */
+
+#topbar{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid var(--border);height:52px;flex-shrink:0;position:sticky;top:0;z-index:200;width:100%;overflow:hidden}
+
+.tb-brand{display:flex;align-items:center;gap:10px;padding:0 18px;border-right:1px solid var(--border);height:100%;flex-shrink:0}
+
+.tb-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex-shrink:0}
+
+.tb-name{font-size:13px;font-weight:800;color:var(--bright);letter-spacing:-.2px;white-space:nowrap}
+
+.tb-sub{font-size:8.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:1px}
+
+.tb-nav{display:flex;align-items:center;height:100%;padding:0 4px;gap:1px;flex:1;overflow-x:auto;min-width:0}
+
+.tb-nav::-webkit-scrollbar{display:none}
+
+.tn{display:flex;align-items:center;gap:5px;padding:0 13px;height:100%;font-size:11.5px;color:var(--text2);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .13s;user-select:none;flex-shrink:0}
+
+.tn:hover{color:var(--white);background:#ffffff04}
+
+.tn.active{color:var(--white);border-bottom-color:var(--accent2)}
+
+.tn-b{background:var(--bg3);color:var(--text3);border-radius:9px;padding:1px 6px;font-size:9px;font-family:'JetBrains Mono',monospace}
+
+.tb-right{padding:0 12px;margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:8px}
+
+.hw-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);padding:6px 11px;font-size:10.5px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+
+.hw-btn:hover{border-color:var(--accent);color:var(--white)}
+
+ 
+
+/* ══ MAIN ══ */
+
+#main{flex:1;overflow-y:auto}
+
+.page{display:none;padding:24px 26px 60px;max-width:1280px;margin:0 auto;width:100%}
+
+.page.active{display:block;animation:fu .2s ease}
+
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+ 
+
+/* ══ COMMON ══ */
+
+.ph{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;flex-wrap:wrap;gap:8px}
+
+.ph h1{font-size:18px;font-weight:800;color:var(--bright);letter-spacing:-.3px}
+
+.ph p{font-size:11px;color:var(--text2);margin-top:2px}
+
+.sec{font-size:8.5px;font-family:'JetBrains Mono',monospace;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+
+ 
+
+.pill{font-size:9.5px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:9px;display:inline-block;white-space:nowrap}
+
+.pg{background:#22c55e14;color:var(--green)}.py{background:#f59e0b14;color:var(--yellow)}
+
+.pr{background:#ef444414;color:var(--red)}.pb{background:#4a5cf014;color:var(--accent2)}
+
+.pgr{background:var(--bg3);color:var(--text3)}
+
+ 
+
+.box{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px;margin-bottom:12px}
+
+ 
+
+.btn-pri{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
+
+.btn-pri:hover{background:var(--accent2)}.btn-pri:disabled{opacity:.45;cursor:wait}
+
+.btn-sec{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;color:var(--text);padding:9px 14px;font-size:11.5px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+
+.btn-sec:hover{border-color:var(--border3);color:var(--white)}.btn-sec:disabled{opacity:.4;cursor:wait}
+
+.btn-ghost{background:transparent;border:none;color:var(--text2);padding:9px 10px;font-size:11.5px}
+
+.btn-ghost:hover{color:var(--white)}
+
+ 
+
+.spin{display:inline-block;width:10px;height:10px;border:2px solid #ffffff28;border-top-color:#fff;border-radius:50%;animation:sp .65s linear infinite;vertical-align:middle;margin-right:4px}
+
+@keyframes sp{to{transform:rotate(360deg)}}
+
+ 
+
+/* ══ PORTFOLIO PAGE ══ */
+
+.port-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:7px;margin-bottom:18px}
+
+.pstat{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:13px 14px}
+
+.pstat-lbl{font-size:8.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+
+.pstat-val{font-size:20px;font-weight:800;color:var(--bright);font-family:'JetBrains Mono',monospace;line-height:1}
+
+.pstat-sub{font-size:9.5px;color:var(--text2);margin-top:3px}
+
+ 
+
+.lg{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:9px}
+
+.lcard{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:14px;cursor:pointer;transition:all .17s;position:relative;overflow:hidden}
+
+.lcard:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-1px);box-shadow:0 8px 24px #00000055}
+
+.lc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+
+.lc-dot{width:7px;height:7px;border-radius:50%;margin-top:3px;flex-shrink:0}
+
+.lc-name{font-size:13px;font-weight:700;color:var(--bright);margin-bottom:2px;line-height:1.3;padding-right:46px}
+
+.lc-meta{font-size:10px;color:var(--text2)}
+
+.lc-prices{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;align-items:center}
+
+.lc-p{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--white)}
+
+.lc-p small{color:var(--text3);font-size:9px}
+
+.lc-foot{margin-top:9px;display:flex;align-items:center;justify-content:space-between}
+
+.lc-strat{font-size:8.5px;font-family:'JetBrains Mono',monospace;padding:2px 6px;border-radius:4px;position:absolute;bottom:10px;right:10px}
+
+.fresh{display:flex;align-items:center;gap:3px;font-size:9px;font-family:'JetBrains Mono',monospace}
+
+.fd{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+.sc-sm{position:absolute;top:10px;right:10px;width:40px;height:40px}
+
+.sc-sm svg{width:40px;height:40px}
+
+.sc-sm .sn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10.5px;font-weight:700;font-family:'JetBrains Mono',monospace}
+
+ 
+
+/* ══ DETAIL PAGE ══ */
+
+.dh{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+
+.back{background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text2);padding:5px 11px;font-size:10.5px}
+
+.back:hover{color:var(--white)}
+
+.fresh-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:7px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;margin-bottom:12px;font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--text2)}
+
+ 
+
+/* strategy */
+
+.strat-row{display:flex;gap:7px;flex-wrap:wrap}
+
+.strat-btn{flex:1;min-width:110px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 12px;text-align:left;cursor:pointer;transition:all .14s}
+
+.strat-btn:hover{border-color:var(--border2)}
+
+.strat-btn.active{border-color:var(--accent2);background:#4a5cf010}
+
+.strat-btn.s-cons.active{border-color:var(--green);background:#22c55e09}
+
+.strat-btn.s-agg.active{border-color:var(--orange);background:#f9731609}
+
+.st-ico{font-size:16px;margin-bottom:4px}
+
+.st-nm{font-size:11.5px;font-weight:700;color:var(--white)}
+
+.st-ds{font-size:9.5px;color:var(--text2);margin-top:2px;line-height:1.4}
+
+ 
+
+/* controls */
+
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:7px;margin-bottom:10px}
+
+.pc-item label{display:block;font-size:9px;color:var(--text2);margin-bottom:3px}
+
+.pc-in{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--bright);padding:7px 9px;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600}
+
+.pc-in:focus{border-color:var(--accent2)}
+
+.pc-hint{font-size:8.5px;color:var(--text3);margin-top:2px}
+
+ 
+
+/* act row */
+
+.act-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+
+ 
+
+/* feedback */
+
+.fb-box{background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:14px;margin-bottom:12px}
+
+.fb-q{font-size:11.5px;color:var(--white);font-weight:600;margin-bottom:9px}
+
+.fb-opts{display:flex;gap:7px;flex-wrap:wrap}
+
+.fb-btn{flex:1;min-width:100px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 10px;font-size:10.5px;color:var(--text2);text-align:center;cursor:pointer;transition:all .13s}
+
+.fb-btn:hover{border-color:var(--border2);color:var(--white)}
+
+.fb-sel-hi{border-color:var(--green)!important;background:#22c55e0a!important;color:var(--green)!important}
+
+.fb-sel-ok{border-color:var(--accent2)!important;background:#4a5cf009!important;color:var(--accent2)!important}
+
+.fb-sel-lo{border-color:var(--orange)!important;background:#f9731608!important;color:var(--orange)!important}
+
+.fb-sel-vl{border-color:var(--red)!important;background:#ef444408!important;color:var(--red)!important}
+
+.fb-note{font-size:9.5px;color:var(--text3);margin-top:7px;font-family:'JetBrains Mono',monospace}
+
+ 
+
+/* lead time */
+
+.lt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:6px;margin-bottom:10px}
+
+.lt-item{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 10px}
+
+.lt-lbl{font-size:8.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:3px}
+
+.lt-val{font-size:14px;font-weight:700;color:var(--bright);font-family:'JetBrains Mono',monospace}
+
+.lt-note{font-size:9px;color:var(--text2);margin-top:2px}
+
+ 
+
+/* score */
+
+.sc-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+
+.sc-big{position:relative;width:74px;height:74px;flex-shrink:0}
+
+.sc-big svg{width:74px;height:74px}
+
+.sc-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+
+.sc-num .n{font-size:19px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1}
+
+.sc-num .d{font-size:8.5px;color:var(--text3);margin-top:1px}
+
+.sbars{flex:1;min-width:170px;display:flex;flex-direction:column;gap:7px}
+
+.sb-row{display:flex;align-items:center;gap:8px}
+
+.sb-l{font-size:10px;color:var(--text2);width:145px;flex-shrink:0}
+
+.sb-t{flex:1;height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+
+.sb-f{height:100%;border-radius:2px;transition:width .7s ease}
+
+.sb-v{font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--text2);width:22px;text-align:right}
+
+.sc-sum{font-size:11px;color:var(--text);margin-top:11px;padding-top:9px;border-top:1px solid var(--border);line-height:1.7}
+
+ 
+
+/* meta */
+
+.meta-g{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:5px}
+
+.mi label{display:block;font-size:9px;color:var(--text3);margin-bottom:2px}
+
+.mi .val{font-size:15px;font-weight:700;color:var(--bright);font-family:'JetBrains Mono',monospace}
+
+.meta-note{font-size:11px;color:var(--text2);border-top:1px solid var(--border);padding-top:8px;margin-top:6px;line-height:1.65}
+
+ 
+
+/* calendar */
+
+.cal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;flex-wrap:wrap;gap:6px}
+
+.cal-lbl{font-size:12px;font-weight:700;color:var(--bright)}
+
+.cal-leg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+
+.cl{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text2)}
+
+.cld{width:7px;height:7px;border-radius:2px}
+
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:2px;max-height:420px;overflow-y:auto;padding-right:2px}
+
+.cc{border-radius:5px;padding:5px 6px;border:1px solid var(--border)}
+
+.cc:hover{border-color:var(--border2)}
+
+.cc-d{font-size:8px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+
+.cc-in{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--bright);font-size:10.5px;font-weight:600;font-family:'JetBrains Mono',monospace;padding:1px 0}
+
+.cc-in:focus{border-bottom-color:var(--accent2)}
+
+.cc-tag{font-size:7px;color:var(--text3);margin-top:1px;font-family:'JetBrains Mono',monospace}
+
+.exp-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text2);padding:4px 10px;font-size:10px}
+
+.exp-btn:hover{color:var(--white)}
+
+ 
+
+/* events */
+
+.ev-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+
+.ev-fb{background:var(--bg2);border:1px solid var(--border);border-radius:16px;color:var(--text2);padding:4px 12px;font-size:10.5px;cursor:pointer;transition:all .12s;white-space:nowrap;user-select:none}
+
+.ev-fb:hover{border-color:var(--border2);color:var(--white)}
+
+.ev-fb.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.ev-srch{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:8px 12px;font-size:12px;margin-bottom:11px}
+
+.ev-srch:focus{border-color:var(--accent)}
+
+.ev-tbl{display:flex;flex-direction:column;gap:3px}
+
+.ev-row{display:flex;align-items:center;gap:9px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:7px;transition:all .12s}
+
+.ev-row:hover{border-color:var(--border2);background:var(--bg3)}
+
+.ev-date{font-size:10px;color:var(--text3);min-width:80px;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+
+.ev-ico{font-size:13px;flex-shrink:0;width:18px;text-align:center}
+
+.ev-name{flex:1;font-size:11.5px;color:var(--white);font-weight:600}
+
+.ev-city{font-size:10px;color:var(--text2);min-width:88px;flex-shrink:0}
+
+.ev-imp{font-size:8.5px;font-weight:600;padding:2px 7px;border-radius:6px;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+
+.ev-del{background:transparent;border:none;color:var(--text3);font-size:11px;padding:2px 4px}
+
+.ev-del:hover{color:var(--red)}
+
+.ev-empty{text-align:center;padding:32px;color:var(--text3);font-size:11.5px;line-height:1.9}
+
+ 
+
+/* conn */
+
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:11px;margin-bottom:11px}
+
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:16px}
+
+.cc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+
+.cc-tr{display:flex;align-items:center;gap:8px}
+
+.cc-nm{font-size:13px;font-weight:700;color:var(--bright)}
+
+.cc-desc{font-size:10.5px;color:var(--text2);margin-bottom:11px;line-height:1.65}
+
+.cc-lbl{display:block;font-size:8.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;margin-top:10px}
+
+.cc-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:8px 10px;font-size:11px;font-family:'JetBrains Mono',monospace}
+
+.cc-inp:focus{border-color:var(--accent)}
+
+.cc-last{font-size:9px;color:var(--text3);margin-top:5px;min-height:14px;font-family:'JetBrains Mono',monospace}
+
+.cc-btn{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:8px;font-size:11px;margin-top:8px}
+
+.cc-btn:hover{border-color:var(--border3);color:var(--white)}
+
+.cc-btn.g{background:#22c55e0d;border-color:#22c55e25;color:var(--green)}
+
+.cc-btn.g:hover{background:#22c55e15}
+
+.bulk-a{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:10px;font-size:11.5px;font-family:'JetBrains Mono',monospace;resize:vertical;line-height:1.7}
+
+.bulk-a:focus{border-color:var(--accent)}
+
+ 
+
+/* modal */
+
+#overlay{display:none;position:fixed;inset:0;background:#00000098;z-index:400;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+
+#overlay.open{display:flex}
+
+.modal{background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:24px;max-width:500px;width:93%;max-height:84vh;overflow-y:auto;animation:fu .18s ease}
+
+.modal h3{font-size:15px;font-weight:700;color:var(--bright);margin-bottom:7px}
+
+.modal p{font-size:11px;color:var(--text2);margin-bottom:13px;line-height:1.65}
+
+.m-lbl{display:block;font-size:9px;color:var(--text2);margin-bottom:3px;margin-top:10px}
+
+.m-inp{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:8px 10px;font-size:12px;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+
+.m-inp:focus{border-color:var(--accent)}
+
+.m-sel{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:7px;color:var(--text);padding:8px 10px;font-size:12px;margin-bottom:4px}
+
+.m-btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:12.5px;font-weight:700;width:100%;margin-top:6px}
+
+.m-btn:hover{background:var(--accent2)}
+
+.m-close{background:var(--bg2);border:1px solid var(--border2);border-radius:7px;color:var(--text2);padding:7px 18px;font-size:11px;margin-top:8px}
+
+.m-close:hover{color:var(--white)}
+
+.fi{display:block;color:var(--text2);font-size:11px;margin-bottom:11px}
+
+.fi::file-selector-button{background:var(--bg2);border:1px solid var(--border2);border-radius:5px;color:var(--text);padding:5px 10px;font-size:10.5px;cursor:pointer;margin-right:9px}
+
+ 
+
+/* toast */
+
+#toast{position:fixed;top:12px;right:12px;padding:10px 15px;border-radius:8px;color:#fff;font-weight:700;font-size:11px;z-index:9999;display:none;box-shadow:0 6px 20px #00000070;max-width:280px;line-height:1.4}
+
+</style>
+
+</head>
+
+<body>
+
+ 
+
+<!-- ══ TOPBAR ══ -->
+
+<nav id="topbar">
+
+  <div class="tb-brand">
+
+    <div class="tb-mark">ST</div>
+
+    <div>
+
+      <div class="tb-name">ST Pricing Tool</div>
+
+      <div class="tb-sub">AI-powered revenue management</div>
+
+    </div>
+
+  </div>
+
+  <div class="tb-nav">
+
+    <div class="tn active" id="nav-listings" onclick="nav('listings')">⊞ Portfolio <span class="tn-b" id="lcount">0</span></div>
+
+    <div class="tn" id="nav-detail" onclick="nav('detail')" style="display:none">
+
+      <span id="nd-ico" style="font-size:7px;color:#7c71f5">●</span> <span id="nd-nm" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span>
+
+    </div>
+
+    <div class="tn" id="nav-events" onclick="nav('events')">🗓 Események <span class="tn-b" id="ev-cnt">0</span></div>
+
+    <div class="tn" id="nav-conn" onclick="nav('conn')">⚙ Kapcsolatok</div>
+
+  </div>
+
+  <div class="tb-right">
+
+    <button class="hw-btn" id="hw-btn" onclick="loadHostaway()">↓ Hostaway szinkron</button>
+
+  </div>
+
+</nav>
+
+ 
+
+<div id="main">
+
+ 
+
+<!-- ══ PORTFOLIO ══ -->
+
+<div class="page active" id="page-listings">
+
+  <div class="ph">
+
+    <div><h1>Portfolio áttekintés</h1><p>Kattints egy lakásra az árazáshoz és elemzéshez</p></div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center" id="city-leg"></div>
+
+  </div>
+
+  <div class="port-stats" id="port-stats"></div>
+
+  <div class="lg" id="lg"></div>
+
+</div>
+
+ 
+
+<!-- ══ DETAIL ══ -->
+
+<div class="page" id="page-detail">
+
+  <div class="dh">
+
+    <button class="back" onclick="nav('listings')">← Portfolio</button>
+
+    <div>
+
+      <div style="display:flex;align-items:center;gap:8px">
+
+        <div id="d-dot" style="width:8px;height:8px;border-radius:50%;background:#7c71f5;flex-shrink:0"></div>
+
+        <span style="font-size:17px;font-weight:800;color:var(--bright)" id="d-title">—</span>
+
+      </div>
+
+      <div style="font-size:10.5px;color:var(--text2);margin-top:2px" id="d-meta">—</div>
+
+    </div>
+
+  </div>
+
+ 
+
+  <div class="fresh-bar" id="d-fresh">
+
+    <div class="fresh"><div class="fd" style="background:var(--text3)"></div><span style="color:var(--text3)">Még nincs elemzés – add meg az alap árat vagy futtasd a piac kutatást</span></div>
+
+  </div>
+
+ 
+
+  <!-- STRATEGY -->
+
+  <div class="box">
+
+    <div class="sec">Árazási stratégia</div>
+
+    <div class="strat-row">
+
+      <div class="strat-btn s-cons" id="strat-cons" onclick="setStrat('conservative')">
+
+        <div class="st-ico">🛡️</div><div class="st-nm">Konzervatív</div>
+
+        <div class="st-ds">Foglaltság előnye – több vendég, alacsonyabb árak</div>
+
+      </div>
+
+      <div class="strat-btn active" id="strat-bal" onclick="setStrat('balanced')">
+
+        <div class="st-ico">⚖️</div><div class="st-nm">Kiegyensúlyozott</div>
+
+        <div class="st-ds">Foglaltság és bevétel egyensúlya – ajánlott</div>
+
+      </div>
+
+      <div class="strat-btn s-agg" id="strat-agg" onclick="setStrat('aggressive')">
+
+        <div class="st-ico">🚀</div><div class="st-nm">Agresszív</div>
+
+        <div class="st-ds">Bevétel maximalizálás – magasabb árak</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+ 
+
+  <!-- PRICING CONTROLS -->
+
+  <div class="box">
+
+    <div class="sec">Alap árak megadása – Claude ebből számítja a napi árakat</div>
+
+    <div class="pc-grid">
+
+      <div class="pc-item">
+
+        <label>Alap hétköznap (Ft)</label>
+
+        <input class="pc-in" type="number" id="bp-wd" placeholder="pl. 18 000" oninput="onBpChange()">
+
+        <div class="pc-hint">H–P · Claude megbecsüli ha üresen hagyod</div>
+
+      </div>
+
+      <div class="pc-item">
+
+        <label>Alap hétvége (Ft)</label>
+
+        <input class="pc-in" type="number" id="bp-we" placeholder="pl. 24 000" oninput="onBpChange()">
+
+        <div class="pc-hint">Szo–V</div>
+
+      </div>
+
+      <div class="pc-item">
+
+        <label>Min. ár / éj (Ft)</label>
+
+        <input class="pc-in" type="number" id="bp-min" placeholder="pl. 12 000" oninput="onBpChange()">
+
+        <div class="pc-hint">Soha nem megyek ez alá</div>
+
+      </div>
+
+      <div class="pc-item">
+
+        <label>Max. ár / éj (Ft)</label>
+
+        <input class="pc-in" type="number" id="bp-max" placeholder="pl. 80 000" oninput="onBpChange()">
+
+        <div class="pc-hint">Soha nem megyek ez fölé</div>
+
+      </div>
+
+    </div>
+
+    <div class="act-row" style="margin-bottom:0">
+
+      <button class="btn-pri" id="btn-res" onclick="runResearch()">🔍 Piac kutatás & árazás</button>
+
+      <button class="btn-sec" onclick="calcManual()" id="btn-calc">⚡ Kiszámítás a megadott árakból</button>
+
+      <button class="btn-sec" onclick="openModal('bookings')">📅 Foglalások</button>
+
+      <button class="btn-sec" onclick="openModal('prices')">💰 Árak feltöltése</button>
+
+      <button class="btn-ghost" onclick="exportCSV()">⬇ CSV</button>
+
+      <button class="btn-sec" id="btn-push" onclick="pushToHostaway()" style="border-color:#22c55e28;color:var(--green);background:#22c55e0a" title="Feltölti az árakat közvetlenül Hostawayba">↑ Feltöltés Hostawaybe</button>
+
+    </div>
+
+    <div id="bp-status" style="font-size:9.5px;color:var(--text3);margin-top:8px;font-family:'JetBrains Mono',monospace"></div>
+
+  </div>
+
+ 
+
+  <!-- FEEDBACK -->
+
+  <div class="fb-box" id="fb-box" style="display:none">
+
+    <div class="fb-q">Mi a tapasztalatod a javasolt árakkal? – Claude ebből tanul és finomít</div>
+
+    <div class="fb-opts">
+
+      <div class="fb-btn" id="fb-hi" onclick="submitFeedback('high')">📈 Lehetett volna magasabb</div>
+
+      <div class="fb-btn" id="fb-ok" onclick="submitFeedback('ok')">✓ Nagyjából jó volt</div>
+
+      <div class="fb-btn" id="fb-lo" onclick="submitFeedback('low')">📉 Kicsit alacsony volt</div>
+
+      <div class="fb-btn" id="fb-vl" onclick="submitFeedback('vlow')">⚠️ Sokkal alacsonyabb kellett</div>
+
+    </div>
+
+    <div class="fb-note" id="fb-note"></div>
+
+  </div>
+
+ 
+
+  <!-- LEAD TIME -->
+
+  <div class="box" id="lt-box" style="display:none">
+
+    <div class="sec">Lead time árazás – ár a foglalásig hátralévő napok szerint</div>
+
+    <div class="lt-grid" id="lt-grid"></div>
+
+    <div style="font-size:10px;color:var(--text2);line-height:1.65" id="lt-note"></div>
+
+  </div>
+
+ 
+
+  <!-- SCORE -->
+
+  <div class="box" id="score-box" style="display:none">
+
+    <div class="sec">Teljesítmény értékelés – Claude elemzés</div>
+
+    <div class="sc-wrap">
+
+      <div class="sc-big">
+
+        <svg viewBox="0 0 74 74">
+
+          <circle cx="37" cy="37" r="29" fill="none" stroke="var(--border2)" stroke-width="4"/>
+
+          <circle id="sc-c" cx="37" cy="37" r="29" fill="none" stroke-width="4" stroke-linecap="round"
+
+            stroke-dasharray="182" stroke-dashoffset="182"
+
+            style="transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .7s ease"/>
+
+        </svg>
+
+        <div class="sc-num"><div class="n" id="sc-n">—</div><div class="d">/ 5.0</div></div>
+
+      </div>
+
+      <div class="sbars" id="sc-bars"></div>
+
+    </div>
+
+    <div class="sc-sum" id="sc-sum"></div>
+
+  </div>
+
+ 
+
+  <!-- META -->
+
+  <div class="box" id="meta-box" style="display:none">
+
+    <div class="sec">Piac kutatás – részletes adatok</div>
+
+    <div class="meta-g" id="meta-g"></div>
+
+    <div class="meta-note" id="meta-note" style="display:none"></div>
+
+  </div>
+
+ 
+
+  <!-- CALENDAR -->
+
+  <div class="box" id="cal-box" style="display:none">
+
+    <div class="cal-hdr">
+
+      <div class="cal-lbl">Árnaptár <span style="color:var(--text3);font-size:9.5px;font-weight:400">szerkeszthető · 2027.01.02-ig</span></div>
+
+      <div style="display:flex;gap:6px;align-items:center">
+
+        <button class="exp-btn" onclick="exportCSV()">⬇ CSV export</button>
+
+        <button class="exp-btn" id="cal-push-btn" onclick="pushToHostaway()" style="border-color:#22c55e35;color:var(--green);background:#22c55e0d">↑ Push Hostawaybe</button>
+
+      </div>
+
+    </div>
+
+    <div class="cal-leg">
+
+      <div class="cl"><div class="cld" style="background:#f59e0b20;border:1px solid #f59e0b30"></div>Csúcs szezon</div>
+
+      <div class="cl"><div class="cld" style="background:#8878f518;border:1px solid #8878f528"></div>Hétvége</div>
+
+      <div class="cl"><div class="cld" style="background:#3b82f614;border:1px solid #3b82f624"></div>Tél</div>
+
+      <div class="cl"><div class="cld" style="background:#f9731614;border:1px solid #f9731624"></div>Last-minute</div>
+
+      <div class="cl"><div class="cld" style="background:#22c55e14;border:1px solid #22c55e24"></div>Esemény</div>
+
+    </div>
+
+    <div class="cal-grid" id="cal-grid"></div>
+
+  </div>
+
+</div>
+
+ 
+
+<!-- ══ EVENTS ══ -->
+
+<div class="page" id="page-events">
+
+  <div class="ph">
+
+    <div><h1>Események</h1><p>Fesztiválok, konferenciák, sportesemények – dinamikusan befolyásolják az árakat</p></div>
+
+    <button class="btn-sec" onclick="openModal('add-event')">＋ Manuális hozzáadás</button>
+
+  </div>
+
+  <input class="ev-srch" id="ev-srch" placeholder="Keresés esemény nevére, városra..." oninput="renderEvents()">
+
+  <div class="ev-bar">
+
+    <div class="ev-fb active" onclick="setEvF('all',this)">Összes</div>
+
+    <div class="ev-fb" onclick="setEvF('magas',this)">🔴 Magas impact</div>
+
+    <div class="ev-fb" onclick="setEvF('közepes',this)">🟡 Közepes</div>
+
+    <div class="ev-fb" onclick="setEvF('alacsony',this)">🟢 Alacsony</div>
+
+    <div class="ev-fb" onclick="setEvF('fesztivál',this)">🎪 Fesztiválok</div>
+
+    <div class="ev-fb" onclick="setEvF('konferencia',this)">💼 Konferencia</div>
+
+    <div class="ev-fb" onclick="setEvF('sport',this)">⚽ Sport</div>
+
+    <button class="btn-sec" style="margin-left:auto" id="ev-fetch-btn" onclick="fetchEvents(this)">🔍 Claude keres eseményeket</button>
+
+  </div>
+
+  <div class="ev-tbl" id="ev-tbl"></div>
+
+</div>
+
+ 
+
+<!-- ══ CONN ══ -->
+
+<div class="page" id="page-conn">
+
+  <div class="ph"><div><h1>Kapcsolatok & Adatok</h1><p>API kulcsok, kapcsolat állapot, bulk import</p></div></div>
+
+  <div class="cg">
+
+    <div class="ccard">
+
+      <div class="cc-hd">
+
+        <div class="cc-tr"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange)"></div><div class="cc-nm">Claude AI API</div></div>
+
+        <div class="pill pgr" id="claude-badge">Nincs megadva</div>
+
+      </div>
+
+      <p class="cc-desc">Piac kutatás, automatikus árazás, teljesítmény értékelés, esemény keresés. Anthropic Console → API Keys.</p>
+
+      <label class="cc-lbl">API Key</label>
+
+      <input class="cc-inp" type="password" id="claude-key" placeholder="sk-ant-api03-..." oninput="onKeyIn('claude')">
+
+      <div class="cc-last" id="claude-last">—</div>
+
+      <button class="cc-btn" onclick="testClaude()">Kapcsolat tesztelése</button>
+
+    </div>
+
+    <div class="ccard">
+
+      <div class="cc-hd">
+
+        <div class="cc-tr"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent2)"></div><div class="cc-nm">Hostaway API</div></div>
+
+        <div class="pill pgr" id="hw-badge">Nincs megadva</div>
+
+      </div>
+
+      <p class="cc-desc">Hostaway OAuth2 – Client ID és Client Secret alapján automatikusan kér hozzáférési tokent.</p>
+
+      <label class="cc-lbl">Client Secret (API Key)</label>
+
+      <input class="cc-inp" type="password" id="hw-key" placeholder="e885a8e921..." oninput="onKeyIn('hw')">
+
+      <label class="cc-lbl">Client ID (Account ID)</label>
+
+      <input class="cc-inp" type="text" id="hw-acct" placeholder="177986">
+
+      <div class="cc-last" id="hw-last">—</div>
+
+      <div id="hw-token-status" style="font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:4px"></div>
+
+      <button class="cc-btn" onclick="testHostaway()">Kapcsolat tesztelése</button>
+
+      <button class="cc-btn g" onclick="loadHostaway()" style="margin-top:6px">↓ Lakások betöltése</button>
+
+    </div>
+
+  </div>
+
+  <div class="ccard">
+
+    <div class="cc-hd"><div class="cc-tr"><div style="width:8px;height:8px;border-radius:50%;background:var(--green)"></div><div class="cc-nm">Bulk Adat Import</div></div></div>
+
+    <p class="cc-desc">Több lakás adatát illeszd be egyszerre – bármilyen formátumban (szöveges lista, táblázat, CSV). Claude feldolgozza és hozzáadja a listához.</p>
+
+    <textarea class="bulk-a" id="bulk-data" rows="6" placeholder="Pl.:&#10;Andrássy 83, Budapest VII. ker, 4 fő, tetőterasz, kb 35 000 Ft max&#10;Siófoki nyaraló, Siófok Balaton part, 8 fő, medence, kerti grill&#10;&#10;Táblázatból kimásolt sorok is működnek..."></textarea>
+
+    <button class="cc-btn g" onclick="parseBulk()" style="margin-top:9px;width:auto;padding:8px 20px">Feldolgozás & hozzáadás Claude-dal</button>
+
+  </div>
+
+</div>
+
+ 
+
+</div><!-- /main -->
+
+ 
+
+<!-- ══ MODAL ══ -->
+
+<div id="overlay" onclick="closeModal()">
+
+  <div class="modal" onclick="event.stopPropagation()" id="mbody"></div>
+
+</div>
+
+<div id="toast"></div>
+
+ 
+
+<script>
+
+// ══ CONFIG ══════════════════════════════════════════════════════════════════════
+
+const MDL = 'claude-sonnet-4-20250514';
+
+const EUR_HUF = 400; // EUR → HUF árfolyam (módosítható)
+
+const MONTH_IDX = {"1":0.821,"2":0.507,"3":0.564,"4":0.664,"5":0.769,"6":1.062,"7":1.195,"8":1.309,"9":1.028,"10":1.314,"11":1.484,"12":2.434}; // Valódi foglalási adatokból (2179 foglalás alapján)
+
+const CITY_C = {Budapest:'#7c71f5',Siófok:'#06b6d4',Balatonalmádi:'#10b981',default:'#f59e0b'};
+
+const IMP_C = {magas:'#ef4444',közepes:'#f59e0b',alacsony:'#22c55e'};
+
+const TY_I = {fesztivál:'🎪',konferencia:'💼',sport:'⚽',koncert:'🎵',egyéb:'📌'};
+
+const cc = c => CITY_C[c]||CITY_C.default;
+
+const scC = s => s>=4.5?'#22c55e':s>=3.5?'#84cc16':s>=2.5?'#f59e0b':s>=1.5?'#f97316':'#ef4444';
+
+ 
+
+// ══ STATE ═══════════════════════════════════════════════════════════════════════
+
+const S = {
+
+  listings: [{"id":"429049","name":"Kleh Residence","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Kléh István utca 3","amenities":"1 szoba · 2 fő","baseEur":85,"baseEurWe":0,"weeklyDisc":0.85,"monthlyDisc":0.75},{"id":"429052","name":"Buda Retreat","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Móricz Zsigmond körtér 16 2","amenities":"1 szoba · 4 fő","baseEur":85,"baseEurWe":90,"weeklyDisc":0.82,"monthlyDisc":0.8},{"id":"429054","name":"Private Rooftop Terrace - Sunny Retreat","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Garay tér 20","amenities":"1 szoba · 2 fő","baseEur":98,"baseEurWe":0,"weeklyDisc":0.8,"monthlyDisc":0.65},{"id":"429055","name":"Szigony Residence - Spacious Apt","city":"Budapest","district":"","guests":6,"type":"Apartman","address":"Budapest Szigony utca 5","amenities":"2 szoba · 6 fő","baseEur":168,"baseEurWe":0,"weeklyDisc":0.8,"monthlyDisc":0.75},{"id":"429056","name":"Kleh Residence 2.","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Kléh István utca 3","amenities":"1 szoba · 2 fő","baseEur":62,"baseEurWe":0,"weeklyDisc":0.75,"monthlyDisc":0.56},{"id":"429057","name":"Raday Residence 2. - Modern 1BR","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Ráday utca 45","amenities":"1 szoba · 2 fő","baseEur":67,"baseEurWe":0,"weeklyDisc":0.75,"monthlyDisc":0.64},{"id":"429058","name":"Buda Heaven - Modern Apt","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Móricz Zsigmond körtér 16","amenities":"1 szoba · 2 fő","baseEur":72,"baseEurWe":0,"weeklyDisc":0.82,"monthlyDisc":0.78},{"id":"429059","name":"Vibrant Escape - City Centre","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Kazinczy utca 9","amenities":"1 szoba · 4 fő","baseEur":90,"baseEurWe":0,"weeklyDisc":0.85,"monthlyDisc":0.75},{"id":"429062","name":"Raday Residence 1. - Modern Apt","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Ráday utca 45","amenities":"1 szoba · 3 fő","baseEur":67,"baseEurWe":0,"weeklyDisc":0.85,"monthlyDisc":0.62},{"id":"429064","name":"Hollo Residence - Gozsdu Centre","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Holló utca 12-14","amenities":"1 szoba · 2 fő","baseEur":98,"baseEurWe":115,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429065","name":"Buena Vista - Balaton Retreat","city":"Paloznak","district":"","guests":6,"type":"Apartman","address":"Paloznak Nagyhegyi utca","amenities":"2 szoba · 6 fő","baseEur":109,"baseEurWe":0,"weeklyDisc":0.8,"monthlyDisc":0.63},{"id":"429066","name":"Liberty Residence - Panoramic Lux","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Molnár utca 53","amenities":"2 szoba · 4 fő","baseEur":124,"baseEurWe":0,"weeklyDisc":0.9,"monthlyDisc":0.75},{"id":"429067","name":"Andrassy Palace-Stylish 1.","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Felsőerdősor utca 22","amenities":"1 szoba · 2 fő","baseEur":83,"baseEurWe":0,"weeklyDisc":0.9,"monthlyDisc":0.72},{"id":"429070","name":"Central Superior Apt - Modern 3BR","city":"Budapest","district":"","guests":8,"type":"Apartman","address":"Budapest József körút 30-32","amenities":"3 szoba · 8 fő","baseEur":134,"baseEurWe":0,"weeklyDisc":0.83,"monthlyDisc":0.8},{"id":"429071","name":"Lumen Loft - Corvin Residence","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Corvin sétány 8","amenities":"1 szoba · 3 fő","baseEur":109,"baseEurWe":0,"weeklyDisc":0.79,"monthlyDisc":0.73},{"id":"429073","name":"Terrace la Vista","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Tolnai Lajos utca 26","amenities":"1 szoba · 4 fő","baseEur":93,"baseEurWe":0,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429074","name":"Modern & Cozy - Budapest apt.","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Lujza utca","amenities":"1 szoba · 4 fő","baseEur":157,"baseEurWe":0,"weeklyDisc":0.81,"monthlyDisc":0.73},{"id":"429075","name":"Azure Residence - Modern 2BR","city":"Budapest","district":"","guests":6,"type":"Apartman","address":"Budapest Himfy utca 10","amenities":"2 szoba · 6 fő","baseEur":109,"baseEurWe":0,"weeklyDisc":0.85,"monthlyDisc":0.79},{"id":"429076","name":"Liberty Residence 2 - Panoramic","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Molnár utca 53","amenities":"1 szoba · 2 fő","baseEur":112,"baseEurWe":124,"weeklyDisc":0.88,"monthlyDisc":0.78},{"id":"429078","name":"Peony Apartment - Siófok","city":"Siófok","district":"","guests":6,"type":"Apartman","address":"Siófok Bláthy Ottó utca 19","amenities":"2 szoba · 6 fő","baseEur":145,"baseEurWe":0,"weeklyDisc":0.8,"monthlyDisc":0.59},{"id":"429079","name":"Central Blue Retreat","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Bank utca 3","amenities":"1 szoba · 4 fő","baseEur":40,"baseEurWe":52,"weeklyDisc":0.86,"monthlyDisc":0.85},{"id":"429081","name":"Azur Villa - Panoramic Escape (teljes)","city":"Balatonalmádi","district":"","guests":12,"type":"Ház","address":"Balatonalmádi Gerle utca 13","amenities":"5 szoba · 12 fő","baseEur":827,"baseEurWe":0,"weeklyDisc":0.8,"monthlyDisc":0.41},{"id":"429068","name":"Azur Villa 1 - Panoramic Escape","city":"Balatonalmádi","district":"","guests":4,"type":"Apartman","address":"Balatonalmádi Gerle utca 13","amenities":"1 szoba · 4 fő","baseEur":181,"baseEurWe":199,"weeklyDisc":0.9,"monthlyDisc":0.74},{"id":"429072","name":"Azur Villa 2 - Panoramic Escape","city":"Balatonalmádi","district":"","guests":4,"type":"Apartman","address":"Balatonalmádi Gerle utca 13","amenities":"2 szoba · 4 fő","baseEur":155,"baseEurWe":171,"weeklyDisc":0.9,"monthlyDisc":0.82},{"id":"429102","name":"Azur Villa 3 - Panoramic Escape","city":"Balatonalmádi","district":"","guests":3,"type":"Apartman","address":"Balatonalmádi Gerle utca 13","amenities":"1 szoba · 3 fő","baseEur":194,"baseEurWe":258,"weeklyDisc":0.9,"monthlyDisc":0.8},{"id":"429080","name":"Baross Home - Spacious Retreat","city":"Budapest","district":"","guests":6,"type":"Apartman","address":"Budapest Baross utca 122","amenities":"2 szoba · 6 fő","baseEur":191,"baseEurWe":235,"weeklyDisc":0.82,"monthlyDisc":0.78},{"id":"429083","name":"Luxury Wellness Penthouse Suite","city":"Siófok","district":"","guests":4,"type":"Apartman","address":"Siófok Köztársaság utca 10","amenities":"1 szoba · 4 fő","baseEur":165,"baseEurWe":265,"weeklyDisc":0.82,"monthlyDisc":0.75},{"id":"429090","name":"Visegradi Duplex - Apt 1-2 (kombinált)","city":"Budapest","district":"","guests":8,"type":"Apartman","address":"Budapest Visegrádi utca 17","amenities":"2 szoba · 8 fő","baseEur":114,"baseEurWe":143,"weeklyDisc":0.85,"monthlyDisc":0.59},{"id":"429084","name":"Visegradi Duplex - Apt 2.","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Visegrádi utca 17","amenities":"1 szoba · 4 fő","baseEur":52,"baseEurWe":60,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429086","name":"Visegradi Duplex - Apt 1.","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Visegrádi utca 17","amenities":"1 szoba · 4 fő","baseEur":52,"baseEurWe":60,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429091","name":"Heros Square - Spacious Szondi","city":"Budapest","district":"","guests":8,"type":"Apartman","address":"Budapest Szondi utca 96","amenities":"2 szoba · 8 fő","baseEur":165,"baseEurWe":205,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429092","name":"Central Studio - COI Residence","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Holló utca 1","amenities":"1 szoba · 3 fő","baseEur":62,"baseEurWe":76,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429093","name":"Lumen Studio - Corvin Residence 2.","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Corvin sétány 6","amenities":"1 szoba · 3 fő","baseEur":72,"baseEurWe":90,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429099","name":"The Grand Loft - Bajcsy Residence","city":"Budapest","district":"","guests":6,"type":"Apartman","address":"Budapest Bajcsy-Zsilinszky út 74","amenities":"2 szoba · 6 fő","baseEur":150,"baseEurWe":189,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429100","name":"Luxurious Charm - Center Retreat 3BR","city":"Budapest","district":"","guests":7,"type":"Apartman","address":"Budapest Hercegprímás utca 11","amenities":"3 szoba · 7 fő","baseEur":150,"baseEurWe":202,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429105","name":"Luxury Villa - Solymar Residence","city":"Solymár","district":"","guests":6,"type":"Ház","address":"Solymár Györgyhegy 41","amenities":"4 szoba · 6 fő","baseEur":465,"baseEurWe":577,"weeklyDisc":0.82,"monthlyDisc":0.59},{"id":"429108","name":"Wonder Lelle - Balaton Retreat","city":"Balatonlelle","district":"","guests":5,"type":"Apartman","address":"Balatonlelle Tabán utca 3","amenities":"2 szoba · 5 fő","baseEur":150,"baseEurWe":165,"weeklyDisc":0.9,"monthlyDisc":0.8},{"id":"429109","name":"The Summer Suite - Budapest Center","city":"Budapest","district":"","guests":6,"type":"Apartman","address":"Budapest Nyár utca 14","amenities":"2 szoba · 6 fő","baseEur":85,"baseEurWe":0,"weeklyDisc":0.95,"monthlyDisc":0.88},{"id":"429110","name":"Opposite Thermal Bath - 2BR","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Vadász utca 27","amenities":"2 szoba · 4 fő","baseEur":105,"baseEurWe":0,"weeklyDisc":0.95,"monthlyDisc":0.85},{"id":"429111","name":"The Summer Garden Condo B","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Nyár utca 14","amenities":"1 szoba · 4 fő","baseEur":69,"baseEurWe":0,"weeklyDisc":0.95,"monthlyDisc":0.88},{"id":"429112","name":"The Summer Garden Condo A","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Nyár utca 14","amenities":"1 szoba · 2 fő","baseEur":42,"baseEurWe":52,"weeklyDisc":0.95,"monthlyDisc":0.88},{"id":"429260","name":"Moon Residence - Spacious and Sunny","city":"Budapest","district":"","guests":6,"type":"Apartman","address":"Budapest Hold utca 15","amenities":"3 szoba · 6 fő","baseEur":114,"baseEurWe":0,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429261","name":"Balaton House - Panoramic Lux","city":"Balatonalmádi","district":"","guests":6,"type":"Apartman","address":"Balatonalmádi Bartók Béla út 80","amenities":"3 szoba · 6 fő","baseEur":323,"baseEurWe":365,"weeklyDisc":0.73,"monthlyDisc":0.63},{"id":"429489","name":"Vakvarjú Csónakház - Room 3","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Vízisport utca 10","amenities":"1 szoba · 2 fő","baseEur":501,"baseEurWe":0,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429491","name":"Vakvarjú Boathouse Suite No 4","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Vízisport utca 10","amenities":"1 szoba · 2 fő","baseEur":501,"baseEurWe":0,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429492","name":"Vakvarjú Boathouse Suite No 1","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Vízisport utca 10","amenities":"1 szoba · 2 fő","baseEur":922,"baseEurWe":1051,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429493","name":"Vakvarjú Csónakház - Room 2","city":"Budapest","district":"","guests":2,"type":"Apartman","address":"Budapest Vízisport utca 10","amenities":"1 szoba · 2 fő","baseEur":813,"baseEurWe":968,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429495","name":"Castle Park Suites - Room 3.","city":"Halásztelek","district":"","guests":2,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 2 fő","baseEur":69,"baseEurWe":81,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429496","name":"Castle Park Suites - Room 2.","city":"Halásztelek","district":"","guests":2,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 2 fő","baseEur":62,"baseEurWe":75,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429497","name":"Castle Park Suites - Room 7.","city":"Halásztelek","district":"","guests":2,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 2 fő","baseEur":62,"baseEurWe":74,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429498","name":"Castle Park Suites - Room 6.","city":"Halásztelek","district":"","guests":2,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 2 fő","baseEur":62,"baseEurWe":74,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429499","name":"Castle Park Suites - Room 4.","city":"Halásztelek","district":"","guests":4,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 4 fő","baseEur":68,"baseEurWe":81,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429500","name":"Castle Park Suites - Room 1.","city":"Halásztelek","district":"","guests":3,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 3 fő","baseEur":73,"baseEurWe":87,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"429501","name":"Castle Park Suites - Room 5.","city":"Halásztelek","district":"","guests":4,"type":"Apartman","address":"Halásztelek Rákóczi Ferenc út 68","amenities":"1 szoba · 4 fő","baseEur":73,"baseEurWe":87,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"430885","name":"Come On Inn - City Center 3BR","city":"Budapest","district":"","guests":9,"type":"Apartman","address":"Budapest Holló utca 1","amenities":"3 szoba · 9 fő","baseEur":205,"baseEurWe":256,"weeklyDisc":0.7,"monthlyDisc":0.6},{"id":"437818","name":"TAS Residences - Apt 1. & 2. (kombinált)","city":"Budapest","district":"","guests":8,"type":"Apartman","address":"Budapest Vas utca 5","amenities":"3 szoba · 8 fő","baseEur":185,"baseEurWe":227,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"437812","name":"TAS Residence 1.","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Vas utca 5","amenities":"1 szoba · 4 fő","baseEur":100,"baseEurWe":127,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"437813","name":"TAS Residence 2.","city":"Budapest","district":"","guests":4,"type":"Apartman","address":"Budapest Vas utca 5","amenities":"2 szoba · 4 fő","baseEur":89,"baseEurWe":117,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"458073","name":"Lumen Studio - Corvin Residence 3.","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Corvin sétány 6","amenities":"1 szoba · 3 fő","baseEur":82,"baseEurWe":98,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"458074","name":"Lumen Studio - Corvin Residence 4.","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Corvin sétány 6","amenities":"1 szoba · 3 fő","baseEur":82,"baseEurWe":98,"weeklyDisc":0.9,"monthlyDisc":0.85},{"id":"458075","name":"Lumen Studio - Corvin Residence 5.","city":"Budapest","district":"","guests":3,"type":"Apartman","address":"Budapest Corvin sétány 6","amenities":"1 szoba · 3 fő","baseEur":87,"baseEurWe":104,"weeklyDisc":0.9,"monthlyDisc":0.85}],
+
+  prices: {},      // {id: {date:num, _meta:{}, _ts:iso, _strat:str}}
+
+  scores: {},      // {id: {score, breakdown[], summary}}
+
+  basePrices: {},  // {id: {wd, we, min, max}}
+
+  events: [],      // [{date, event, impact, type, city}]
+
+  feedback: {},    // {id: {fb, adj}}
+
+  selId: null,
+
+  strat: 'balanced',
+
+  evFilter: 'all',
+
+  allDates: null,
+
+};
+
+ 
+
+// ══ HELPERS ══════════════════════════════════════════════════════════════════════
+
+function getDates() {
+
+  if (S.allDates) return S.allDates;
+
+  const d=[]; const cur=new Date(); cur.setHours(0,0,0,0);
+
+  const end=new Date('2027-01-02');
+
+  while(cur<=end){d.push(cur.toISOString().split('T')[0]);cur.setDate(cur.getDate()+1);}
+
+  return S.allDates=d;
+
+}
+
+const isWE = d => [0,6].includes(new Date(d).getDay());
+
+const season = d => { const m=new Date(d).getMonth()+1; return m>=6&&m<=8?'peak':m===12||m<=2?'winter':'mid'; };
+
+const daysUntil = d => Math.round((new Date(d)-new Date())/86400000);
+
+const fmtN = n => n!=null?Number(n).toLocaleString('hu')+'':'—';
+
+const fmtDt = iso => iso?new Date(iso).toLocaleString('hu-HU',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+
+function timeSince(iso){
+
+  const m=(Date.now()-new Date(iso))/60000;
+
+  if(m<60) return {t:`${Math.round(m)} perce`,c:'#22c55e'};
+
+  if(m<1440) return {t:`${Math.round(m/60)} órája`,c:'#84cc16'};
+
+  if(m<10080) return {t:`${Math.round(m/1440)} napja`,c:'#f59e0b'};
+
+  return {t:`${Math.round(m/10080)} hete`,c:'#ef4444'};
+
+}
+
+ 
+
+// event impact on a date
+
+function eventsOnDate(date) {
+
+  return S.events.filter(ev=>ev.date===date);
+
+}
+
+ 
+
+// ══ TOAST ═══════════════════════════════════════════════════════════════════════
+
+function notify(msg,t='ok'){
+
+  const el=document.getElementById('toast');
+
+  el.textContent=msg; el.style.background=t==='err'?'#991b1b':'#14532d';
+
+  el.style.display='block'; clearTimeout(el._t);
+
+  el._t=setTimeout(()=>el.style.display='none',3500);
+
+}
+
+ 
+
+// ══ CLAUDE ═══════════════════════════════════════════════════════════════════════
+
+async function callClaude(sys, usr, search=false){
+
+  const key=document.getElementById('claude-key').value.trim();
+
+  const body={model:MDL,max_tokens:1500,system:sys,messages:[{role:'user',content:usr}]};
+
+  if(search) body.tools=[{type:'web_search_20250305',name:'web_search'}];
+
+  const h={'Content-Type':'application/json'};
+
+  if(key) h['x-api-key']=key;
+
+  h['anthropic-version']='2023-06-01';
+
+  h['anthropic-dangerous-direct-browser-access']='true';
+
+  const _url=location.hostname==='localhost'?'/api/claude':'https://api.anthropic.com/v1/messages';
+
+  const r=await fetch(_url,{method:'POST',headers:h,body:JSON.stringify(body)});
+
+  const d=await r.json();
+
+  if(d.error) throw new Error(d.error.message||'API hiba');
+
+  return d.content?.filter(b=>b.type==='text').map(b=>b.text).join('\n')||'';
+
+}
+
+ 
+
+// ══ NAV ══════════════════════════════════════════════════════════════════════════
+
+function nav(p){
+
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+
+  document.getElementById('page-'+p).classList.add('active');
+
+  document.querySelectorAll('.tn').forEach(x=>x.classList.remove('active'));
+
+  const n=document.getElementById('nav-'+p); if(n) n.classList.add('active');
+
+}
+
+ 
+
+// ══ PORTFOLIO STATS ═══════════════════════════════════════════════════════════════
+
+function renderPortStats(){
+
+  const total=S.listings.length;
+
+  const priced=S.listings.filter(l=>hasPrices(l.id)).length;
+
+  const scored=S.listings.filter(l=>S.scores[l.id]).length;
+
+  const avgScore=scored?( S.listings.filter(l=>S.scores[l.id]).reduce((a,l)=>a+S.scores[l.id].score,0)/scored).toFixed(1):'—';
+
+  const allRevs=S.listings.map(l=>{
+
+    const p=S.prices[l.id]; if(!p) return 0;
+
+    const vals=Object.entries(p).filter(([k])=>!k.startsWith('_')).map(([,v])=>v);
+
+    return vals.reduce((a,b)=>a+b,0);
+
+  });
+
+  const totalRev=allRevs.reduce((a,b)=>a+b,0);
+
+  document.getElementById('port-stats').innerHTML=[
+
+    ['Lakások',total,'összesen'],
+
+    ['Árazott',`${priced}/${total}`,'lakás'],
+
+    ['Átlag értékelés',avgScore,'/ 5.0'],
+
+    ['Becsült bevétel',totalRev>0?`${Math.round(totalRev/1e6).toLocaleString('hu')}M`:'—','Ft 2027-ig'],
+
+  ].map(([l,v,s])=>`<div class="pstat"><div class="pstat-lbl">${l}</div><div class="pstat-val">${v}</div><div class="pstat-sub">${s}</div></div>`).join('');
+
+}
+
+ 
+
+// ══ LISTINGS ══════════════════════════════════════════════════════════════════════
+
+function hasPrices(id){ const p=S.prices[id]; return p&&Object.keys(p).filter(k=>!k.startsWith('_')).length>0; }
+
+ 
+
+function renderListings(){
+
+  const n=S.listings.length;
+
+  document.getElementById('lcount').textContent=n;
+
+  const cities=[...new Set(S.listings.map(l=>l.city))];
+
+  document.getElementById('city-leg').innerHTML=cities.map(c=>
+
+    `<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><div style="width:6px;height:6px;border-radius:50%;background:${cc(c)}"></div>${c}</div>`
+
+  ).join('');
+
+ 
+
+  document.getElementById('lg').innerHTML=S.listings.map((l,i)=>{
+
+    const hp=hasPrices(l.id); const sc=S.scores[l.id];
+
+    const p=S.prices[l.id]; const meta=p?._meta;
+
+    const bp=S.basePrices[l.id]; const fresh=p?._ts?timeSince(p._ts):null;
+
+    const strat=p?._strat;
+
+ 
+
+    const scRing=sc?`<div class="sc-sm"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="var(--border2)" stroke-width="3"/><circle cx="20" cy="20" r="15" fill="none" stroke="${scC(sc.score)}" stroke-width="3" stroke-linecap="round" stroke-dasharray="94" stroke-dashoffset="${94-(94*sc.score/5)}" style="transform:rotate(-90deg);transform-origin:50% 50%"/></svg><div class="sn" style="color:${scC(sc.score)}">${sc.score.toFixed(1)}</div></div>`:''
+
+ 
+
+    const stratLabel=strat==='conservative'?'🛡 konzervatív':strat==='aggressive'?'🚀 agresszív':strat?'⚖ kiegyensúlyozott':'';
+
+    const stratBg=strat==='conservative'?'#22c55e18':strat==='aggressive'?'#f9731618':'#4a5cf018';
+
+    const stratCol=strat==='conservative'?'var(--green)':strat==='aggressive'?'var(--orange)':'var(--accent2)';
+
+ 
+
+    const bEur=l.baseEur; const weEur=l.baseEurWe||l.baseEur;
+
+    const priceDisplay = bp?
+
+      `<span class="lc-p">${fmtN(bp.wd)} Ft <small>hétköznap</small></span><span style="color:var(--text3);font-size:9px">·</span><span class="lc-p">${fmtN(bp.we||bp.wd)} Ft <small>hétvége</small></span>`:
+
+      bEur?`<span class="lc-p">${bEur} EUR <small style="color:var(--text3)">≈${fmtN(bEur*EUR_HUF)} Ft</small></span>${weEur&&weEur!==bEur?`<span style="color:var(--text3);font-size:9px">·</span><span class="lc-p">${weEur} EUR <small>hétvége</small></span>`:''}`:
+
+      meta?`<span class="lc-p">${fmtN(meta.base_weekday)} Ft <small>hétköznap</small></span>`:
+
+      `<span style="font-size:10px;color:var(--text3)">Nincs ár – Claude kutatás vagy manuális</span>`;
+
+ 
+
+    return `<div class="lcard" onclick="openListing('${l.id}')" style="animation:fu .28s ease ${i*.04}s both">
+
+      ${scRing}
+
+      <div class="lc-top">
+
+        <div class="lc-dot" style="background:${cc(l.city)}"></div>
+
+        <div class="pill ${hp?'pg':'pgr'}">${hp?'✓ árazott':'nincs ár'}</div>
+
+      </div>
+
+      <div class="lc-name">${l.name}</div>
+
+      <div class="lc-meta">${l.city}${l.district?`, ${l.district}`:''} · ${l.guests} fő · ${l.type}</div>
+
+      <div class="lc-prices">${priceDisplay}</div>
+
+      <div class="lc-foot">
+
+        ${fresh?`<div class="fresh"><div class="fd" style="background:${fresh.c}"></div><span style="color:${fresh.c}">${fresh.t} frissítve</span></div>`
+
+               :`<div class="fresh"><div class="fd" style="background:var(--text3)"></div><span style="color:var(--text3)">nincs adat</span></div>`}
+
+      </div>
+
+      ${stratLabel?`<div class="lc-strat" style="background:${stratBg};color:${stratCol}">${stratLabel}</div>`:''}
+
+    </div>`;
+
+  }).join('');
+
+  renderPortStats();
+
+}
+
+ 
+
+// ══ OPEN LISTING ══════════════════════════════════════════════════════════════════
+
+function openListing(id){
+
+  S.selId=id; S.strat=S.prices[id]?._strat||'balanced';
+
+  const l=S.listings.find(x=>x.id===id);
+
+  // sidebar nav item
+
+  document.getElementById('nav-detail').style.display='flex';
+
+  document.getElementById('nd-ico').style.color=cc(l.city);
+
+  document.getElementById('nd-nm').textContent=l.name;
+
+  // header
+
+  document.getElementById('d-dot').style.background=cc(l.city);
+
+  document.getElementById('d-title').textContent=l.name;
+
+  document.getElementById('d-meta').textContent=`${l.address} · ${l.guests} fő · ${l.type}${l.amenities?' · '+l.amenities:''}`;
+
+  // populate base price fields
+
+  const bp=S.basePrices[id]||{};
+
+  document.getElementById('bp-wd').value=bp.wd||'';
+
+  document.getElementById('bp-we').value=bp.we||'';
+
+  document.getElementById('bp-min').value=bp.min||'';
+
+  document.getElementById('bp-max').value=bp.max||'';
+
+  document.getElementById('bp-status').textContent='';
+
+  // strategy buttons
+
+  setStratUI(S.strat);
+
+  // render all
+
+  renderFresh(); renderFeedback(); renderLeadTime(); renderScore(); renderMeta(); renderCalendar();
+
+  nav('detail');
+
+}
+
+ 
+
+// ══ FRESHNESS ═════════════════════════════════════════════════════════════════════
+
+function renderFresh(){
+
+  const p=S.prices[S.selId]; const el=document.getElementById('d-fresh');
+
+  if(!p?._ts){
+
+    el.innerHTML=`<div class="fresh"><div class="fd" style="background:var(--text3)"></div><span style="color:var(--text3)">Még nincs elemzés – add meg az alap árat vagy futtasd a piac kutatást</span></div>`;
+
+    return;
+
+  }
+
+  const f=timeSince(p._ts); const strat=p._strat||'balanced';
+
+  const stratLbl=strat==='conservative'?'🛡 konzervatív':strat==='aggressive'?'🚀 agresszív':'⚖ kiegyensúlyozott';
+
+  el.innerHTML=`
+
+    <div class="fresh"><div class="fd" style="background:${f.c}"></div><span style="color:${f.c}">${f.t} frissítve</span></div>
+
+    <span style="color:var(--text3)">·</span>
+
+    <span>Utolsó kutatás: ${fmtDt(p._ts)}</span>
+
+    <span style="color:var(--text3)">·</span>
+
+    <span>Stratégia: ${stratLbl}</span>`;
+
+}
+
+ 
+
+// ══ STRATEGY ══════════════════════════════════════════════════════════════════════
+
+function setStrat(s){
+
+  S.strat=s; setStratUI(s);
+
+  if(hasPrices(S.selId)) recalcWithStrat();
+
+}
+
+function setStratUI(s){
+
+  ['cons','bal','agg'].forEach(x=>document.getElementById('strat-'+x).classList.remove('active'));
+
+  const map={conservative:'cons',balanced:'bal',aggressive:'agg'};
+
+  document.getElementById('strat-'+(map[s]||'bal')).classList.add('active');
+
+}
+
+// Strategy multipliers
+
+function stratMult(s){ return s==='conservative'?0.88:s==='aggressive'?1.14:1.0; }
+
+ 
+
+function recalcWithStrat(){
+
+  const p=S.prices[S.selId]; if(!p?._meta) return;
+
+  const meta=p._meta; const m=stratMult(S.strat);
+
+  const bp=S.basePrices[S.selId]||{};
+
+  const baseWD=bp.wd||meta.base_weekday; const baseWE=bp.we||meta.base_weekend;
+
+  const minP=bp.min||0; const maxP=bp.max||Infinity;
+
+  buildPrices(meta, baseWD*m, baseWE*m, minP, maxP);
+
+  S.prices[S.selId]._strat=S.strat;
+
+  renderCalendar(); renderFresh(); renderListings();
+
+  document.getElementById('bp-status').textContent=`✓ Stratégia módosítva: ${S.strat}`;
+
+}
+
+ 
+
+// ══ BASE PRICE CHANGE ═════════════════════════════════════════════════════════════
+
+function onBpChange(){
+
+  if(!S.selId) return;
+
+  S.basePrices[S.selId]={
+
+    wd:parseFloat(document.getElementById('bp-wd').value)||0,
+
+    we:parseFloat(document.getElementById('bp-we').value)||0,
+
+    min:parseFloat(document.getElementById('bp-min').value)||0,
+
+    max:parseFloat(document.getElementById('bp-max').value)||Infinity,
+
+  };
+
+}
+
+ 
+
+function calcManual(){
+
+  const bp=S.basePrices[S.selId]; const wd=bp?.wd||0; const we=bp?.we||0;
+
+  if(!wd&&!we){notify('Add meg legalább a hétköznap alap árat!','err');return;}
+
+  const minP=bp?.min||0; const maxP=bp?.max||Infinity;
+
+  const m=stratMult(S.strat);
+
+  buildPrices({peak_mult:1.85,winter_mult:0.72}, (wd||we)*m, (we||wd)*m, minP, maxP);
+
+  S.prices[S.selId]._strat=S.strat;
+
+  if(!S.prices[S.selId]._ts) S.prices[S.selId]._ts=new Date().toISOString();
+
+  renderCalendar(); renderFresh(); renderListings();
+
+  document.getElementById('bp-status').textContent=`✓ ${getDates().length} nap árazva 2027.01.02-ig`;
+
+  notify('Árak kiszámítva ✓');
+
+}
+
+ 
+
+// ══ BUILD PRICES ═══════════════════════════════════════════════════════════════════
+
+function buildPrices(meta, baseWD, baseWE, minP, maxP){
+
+  const id=S.selId;
+
+  if(!S.prices[id]) S.prices[id]={};
+
+  const peakM=meta.peak_mult||1.85; const winterM=meta.winter_mult||0.72;
+
+  const bp=S.basePrices[id]||{};
+
+  if(!minP) minP=bp.min||0;
+
+  if(!maxP||maxP===Infinity) maxP=bp.max||Infinity;
+
+ 
+
+  getDates().forEach(d=>{
+
+    const w=isWE(d);
+
+    let p=w?baseWE:baseWD;
+
+    // Valódi havi szorzó (2179 foglalás alapján)
+
+    const mo=new Date(d).getMonth()+1;
+
+    p*=(MONTH_IDX[mo]||1.0);
+
+    // lead time adjustments
+
+    const days=daysUntil(d);
+
+    if(days>=0&&days<7) p*=0.88;       // last-minute discount
+
+    else if(days>=90) p*=1.05;         // early bird slight premium
+
+    // event bump
+
+    const evs=eventsOnDate(d);
+
+    if(evs.some(ev=>ev.impact==='magas')) p*=1.30;
+
+    else if(evs.some(ev=>ev.impact==='közepes')) p*=1.15;
+
+    else if(evs.some(ev=>ev.impact==='alacsony')) p*=1.07;
+
+    // clamp
+
+    p=Math.round(p/500)*500; // round to nearest 500
+
+    if(minP&&p<minP) p=minP;
+
+    if(maxP&&maxP!==Infinity&&p>maxP) p=maxP;
+
+    S.prices[id][d]=p;
+
+  });
+
+  S.prices[id]._meta={...meta,base_weekday:baseWD,base_weekend:baseWE};
+
+}
+
+ 
+
+// ══ MARKET RESEARCH ════════════════════════════════════════════════════════════════
+
+async function runResearch(){
+
+  const l=S.listings.find(x=>x.id===S.selId); if(!l) return;
+
+  const btn=document.getElementById('btn-res');
+
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>Kutat...';
+
+ 
+
+  const fbAdj=S.feedback[S.selId];
+
+  const fbHint=fbAdj?`\nFontос: az előző árazásról a felhasználó azt mondta: "${fbAdj.fb}". ${fbAdj.hint}`:'';
+
+  const bp=S.basePrices[S.selId]||{};
+
+  const bpHint=bp.wd?`\nA felhasználó által megadott alap árak: hétköznap ${bp.wd} Ft, hétvége ${bp.we||bp.wd} Ft. ${bp.min?'Min ár: '+bp.min+' Ft.':''} ${bp.max&&bp.max!==Infinity?'Max ár: '+bp.max+' Ft.':''} A piaci elemzés alapján finomítsd ezeket.`:'';
+
+  const stratHint=`\nÁrazási stratégia: ${S.strat==='conservative'?'konzervatív (foglaltság előnye, piaci árnál 10-15%-kal olcsóbb)':S.strat==='aggressive'?'agresszív (bevétel maximalizálás, piaci árnál 10-15%-kal drágább)':'kiegyensúlyozott (piaci átlaghoz közel)'}.`;
+
+ 
+
+  try{
+
+    const raw=await callClaude(
+
+      `Te egy shortterm rental dinamikus árazási szakértő vagy Magyarországon. Kizárólag valid JSON-t válaszolj, semmi más szöveg.
+
+KÖTELEZŐ formátum (minden mező szükséges, számok egész HUF értékek):
+
+{
+
+  "base_weekday": szám,
+
+  "base_weekend": szám,
+
+  "peak_mult": szám,
+
+  "winter_mult": szám,
+
+  "market_avg_weekday": szám,
+
+  "market_avg_weekend": szám,
+
+  "occupancy_estimate": szám,
+
+  "price_vs_market": szám,
+
+  "price_competitiveness": szám,
+
+  "occupancy_score": szám,
+
+  "demand_score": szám,
+
+  "location_score": szám,
+
+  "overall_score": szám,
+
+  "lt_last_minute": szám,
+
+  "lt_1_2_week": szám,
+
+  "lt_2_4_week": szám,
+
+  "lt_1_3_month": szám,
+
+  "lt_3_plus_month": szám,
+
+  "notes": "2-3 mondatos megjegyzés magyarul",
+
+  "score_summary": "4-5 mondatos értékelés: mi a helyzet a piacon, mit csinál jól, min javítson – magyarul"
+
+}`,
+
+      `Végezz részletes piac kutatást és árazást:
+
+Lakás: ${l.name}
+
+Cím: ${l.address}
+
+Férőhely: ${l.guests} fő
+
+Típus: ${l.type}
+
+Adottságok: ${l.amenities||'nincs megadva'}${fbHint}${bpHint}${stratHint}
+
+ 
+
+Feladatok:
+
+1. Keress aktuális Airbnb és Booking.com árakat erre a helyszínre (hasonló méret, típus)
+
+2. Add meg a reális HUF alapárakat
+
+3. Számítsd ki a lead-time alapú árakat (last-minute -12%, 1-2 hét +0%, 1-3 hónap +5%)
+
+4. Értékeld 1.0-5.0 skálán
+
+5. A peak_mult Balaton esetén legyen 2.0-2.5, Budapesten 1.6-1.9`,
+
+      true
+
+    );
+
+ 
+
+    const meta=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+ 
+
+    // store base prices from Claude
+
+    const bpWD=bp.wd||meta.base_weekday; const bpWE=bp.we||meta.base_weekend;
+
+    S.basePrices[S.selId]={wd:bpWD, we:bpWE, min:bp.min||0, max:bp.max||Infinity};
+
+    document.getElementById('bp-wd').value=bpWD;
+
+    document.getElementById('bp-we').value=bpWE;
+
+ 
+
+    // init prices obj
+
+    S.prices[S.selId]={_meta:meta,_ts:new Date().toISOString(),_strat:S.strat};
+
+ 
+
+    const m=stratMult(S.strat);
+
+    buildPrices(meta, bpWD*m, bpWE*m, bp.min||0, bp.max||Infinity);
+
+    S.prices[S.selId]._meta=meta; S.prices[S.selId]._strat=S.strat;
+
+ 
+
+    // score
+
+    S.scores[S.selId]={
+
+      score:meta.overall_score||3,
+
+      breakdown:[
+
+        {l:'Ár versenyképesség',v:meta.price_competitiveness||3,n:`piaci átlaghoz: ${meta.price_vs_market>0?'+':''}${meta.price_vs_market||0}%`},
+
+        {l:'Becsült foglaltság',v:meta.occupancy_score||3,n:`~${meta.occupancy_estimate||'—'}%`},
+
+        {l:'Helyszín kereslet',v:meta.demand_score||3,n:''},
+
+        {l:'Helyszín minőség',v:meta.location_score||3,n:''},
+
+      ],
+
+      summary:meta.score_summary||''
+
+    };
+
+ 
+
+    renderFresh(); renderScore(); renderMeta(); renderLeadTime(); renderCalendar();
+
+    renderListings(); renderFeedback();
+
+    document.getElementById('bp-status').textContent=`✓ Claude árak betöltve – ${getDates().length} nap árazva, stratégia: ${S.strat}`;
+
+    notify(`Piac kutatás kész: ${l.name} ✓`);
+
+  }catch(e){
+
+    notify('Hiba: '+e.message,'err');
+
+    console.error(e);
+
+  }
+
+  btn.disabled=false; btn.innerHTML='🔍 Piac kutatás & árazás';
+
+}
+
+ 
+
+// ══ FEEDBACK ══════════════════════════════════════════════════════════════════════
+
+function renderFeedback(){
+
+  const box=document.getElementById('fb-box');
+
+  if(!hasPrices(S.selId)){box.style.display='none';return;}
+
+  box.style.display='block';
+
+  ['hi','ok','lo','vl'].forEach(x=>document.getElementById('fb-'+x).className='fb-btn');
+
+  document.getElementById('fb-note').textContent='';
+
+}
+
+function submitFeedback(type){
+
+  const clsMap={high:'fb-sel-hi',ok:'fb-sel-ok',low:'fb-sel-lo',vlow:'fb-sel-vl'};
+
+  const idMap={high:'fb-hi',ok:'fb-ok',low:'fb-lo',vlow:'fb-vl'};
+
+  ['hi','ok','lo','vl'].forEach(x=>document.getElementById('fb-'+x).className='fb-btn');
+
+  document.getElementById(idMap[type]).className='fb-btn '+clsMap[type];
+
+  const hints={
+
+    high:'Legközelebb 8-12%-kal magasabb alap árakkal dolgozom.',
+
+    ok:'Köszönöm, az árazás jó volt. Következő kutatásnál ezt veszem alapul.',
+
+    low:'Legközelebb 10-15%-kal alacsonyabb árakkal dolgozom – a foglaltság fontosabb.',
+
+    vlow:'Legközelebb 20-25%-kal alacsonyabb árakkal dolgozom.',
+
+  };
+
+  const adjMap={high:1.10,ok:1.0,low:0.88,vlow:0.78};
+
+  S.feedback[S.selId]={fb:type,hint:hints[type],adj:adjMap[type]};
+
+  document.getElementById('fb-note').textContent=hints[type];
+
+  notify('Visszajelzés rögzítve ✓');
+
+}
+
+ 
+
+// ══ LEAD TIME ═════════════════════════════════════════════════════════════════════
+
+function renderLeadTime(){
+
+  const p=S.prices[S.selId]; const meta=p?._meta; const box=document.getElementById('lt-box');
+
+  if(!meta){box.style.display='none';return;}
+
+  box.style.display='block';
+
+  const base=meta.base_weekday||0;
+
+  const items=[
+
+    ['Last-minute','< 7 nap',Math.round(base*0.88),'Szabad napok feltöltése'],
+
+    ['Rövid táv','1–2 hét',Math.round(base*1.0),'Alap ár'],
+
+    ['Közepes','2–4 hét',Math.round(base*1.03),'Kis prémium'],
+
+    ['Előre','1–3 hónap',Math.round(base*1.05),'Early bird'],
+
+    ['Korai','3+ hónap',Math.round(base*1.07),'Legjobb áron előre'],
+
+  ];
+
+  document.getElementById('lt-grid').innerHTML=items.map(([l,s,p2,n])=>
+
+    `<div class="lt-item"><div class="lt-lbl">${l}</div><div class="lt-val">${fmtN(p2)} Ft</div><div class="lt-note">${s} · ${n}</div></div>`
+
+  ).join('');
+
+  document.getElementById('lt-note').textContent=`A lead-time alapú árazás automatikusan be van építve a naptárba. Last-minute napokra (< 7 nap) -12%, korai foglalásokra (3+ hónap) +7% az alap árhoz képest.`;
+
+}
+
+ 
+
+// ══ SCORE ═════════════════════════════════════════════════════════════════════════
+
+function renderScore(){
+
+  const sc=S.scores[S.selId]; const box=document.getElementById('score-box');
+
+  if(!sc){box.style.display='none';return;}
+
+  box.style.display='block';
+
+  const off=182-(182*sc.score/5);
+
+  const c=document.getElementById('sc-c'); c.style.stroke=scC(sc.score); c.setAttribute('stroke-dashoffset',off);
+
+  const n=document.getElementById('sc-n'); n.textContent=sc.score.toFixed(1); n.style.color=scC(sc.score);
+
+  document.getElementById('sc-bars').innerHTML=sc.breakdown.map(b=>
+
+    `<div class="sb-row"><div class="sb-l">${b.l}${b.n?` <span style="font-size:8.5px;color:var(--text3)">(${b.n})</span>`:''}</div><div class="sb-t"><div class="sb-f" style="width:${b.v*20}%;background:${scC(b.v)}"></div></div><div class="sb-v">${b.v.toFixed(1)}</div></div>`
+
+  ).join('');
+
+  document.getElementById('sc-sum').textContent=sc.summary;
+
+}
+
+ 
+
+// ══ META ══════════════════════════════════════════════════════════════════════════
+
+function renderMeta(){
+
+  const p=S.prices[S.selId]; const meta=p?._meta; const box=document.getElementById('meta-box');
+
+  if(!meta){box.style.display='none';return;}
+
+  box.style.display='block';
+
+  const vsM=meta.price_vs_market||0;
+
+  const vsC=vsM>8?'var(--red)':vsM<-8?'var(--green)':'var(--yellow)';
+
+  const items=[
+
+    ['Claude javasolt hétköznap',`${fmtN(meta.base_weekday)} Ft`],
+
+    ['Claude javasolt hétvége',`${fmtN(meta.base_weekend)} Ft`],
+
+    ['Piaci átlag hétköznap',`${fmtN(meta.market_avg_weekday)} Ft`],
+
+    ['Piaci átlag hétvége',`${fmtN(meta.market_avg_weekend)} Ft`],
+
+    ['Ár vs. piac',`${vsM>0?'+':''}${vsM}%`,'color:'+vsC],
+
+    ['Becsült foglaltság',`${meta.occupancy_estimate||'—'}%`],
+
+    ['Csúcs szorzó',`×${meta.peak_mult||'—'}`],
+
+    ['Tél szorzó',`×${meta.winter_mult||'—'}`],
+
+  ];
+
+  document.getElementById('meta-g').innerHTML=items.map(([lb,v,st])=>
+
+    `<div class="mi"><label>${lb}</label><div class="val" style="${st||''}">${v}</div></div>`
+
+  ).join('');
+
+  const notEl=document.getElementById('meta-note');
+
+  if(meta.notes){notEl.textContent='💡 '+meta.notes;notEl.style.display='block';}
+
+  else notEl.style.display='none';
+
+}
+
+ 
+
+// ══ CALENDAR ══════════════════════════════════════════════════════════════════════
+
+function renderCalendar(){
+
+  const p=S.prices[S.selId]; const box=document.getElementById('cal-box');
+
+  if(!p||Object.keys(p).filter(k=>!k.startsWith('_')).length===0){box.style.display='none';return;}
+
+  box.style.display='block';
+
+  const today=new Date().toISOString().split('T')[0];
+
+ 
+
+  document.getElementById('cal-grid').innerHTML=getDates().map(d=>{
+
+    const s=season(d); const w=isWE(d); const days=daysUntil(d);
+
+    const evs=eventsOnDate(d);
+
+    const hasHighEv=evs.some(ev=>ev.impact==='magas');
+
+    const bg=hasHighEv?'#22c55e10':s==='peak'?'#f59e0b0c':s==='winter'?'#3b82f60c':w?'#8878f50b':days<7&&days>=0?'#f9731608':'#ffffff03';
+
+    const val=p[d]||'';
+
+    const tag=hasHighEv?'🎪':s==='peak'?'▲':s==='winter'?'❄':w?'W':days<7&&days>=0?'LM':'';
+
+    const isPast=d<today;
+
+    return `<div class="cc" style="background:${bg};${isPast?'opacity:.45':''}">
+
+      <div class="cc-d">${d.slice(5)}</div>
+
+      <input class="cc-in" type="number" value="${val}" data-date="${d}" data-id="${S.selId}" onchange="updPrice(this)" ${isPast?'disabled':''}}>
+
+      ${tag?`<div class="cc-tag">${tag}</div>`:''}
+
+    </div>`;
+
+  }).join('');
+
+}
+
+function updPrice(el){
+
+  if(!S.prices[el.dataset.id]) S.prices[el.dataset.id]={_ts:new Date().toISOString()};
+
+  S.prices[el.dataset.id][el.dataset.date]=Number(el.value);
+
+}
+
+ 
+
+// ══ EVENTS ════════════════════════════════════════════════════════════════════════
+
+let evFilter='all';
+
+function setEvF(f,btn){ evFilter=f; document.querySelectorAll('.ev-fb').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderEvents(); }
+
+ 
+
+function renderEvents(){
+
+  document.getElementById('ev-cnt').textContent=S.events.length;
+
+  const srch=document.getElementById('ev-srch').value.toLowerCase();
+
+  let evs=S.events.filter(ev=>{
+
+    const ms=!srch||(ev.event||'').toLowerCase().includes(srch)||(ev.city||'').toLowerCase().includes(srch);
+
+    const mf=evFilter==='all'||ev.impact===evFilter||ev.type===evFilter;
+
+    return ms&&mf;
+
+  }).sort((a,b)=>a.date.localeCompare(b.date));
+
+ 
+
+  const el=document.getElementById('ev-tbl');
+
+  if(!evs.length){
+
+    el.innerHTML=`<div class="ev-empty">Nincs megjeleníthető esemény<br><span style="font-size:10px;color:var(--text3)">Kattints a "Claude keres eseményeket" gombra vagy adj hozzá manuálisan.<br>Az esemény dátumokon az árak automatikusan magasabbak lesznek.</span></div>`;
+
+    return;
+
+  }
+
+  el.innerHTML=evs.map(ev=>`
+
+    <div class="ev-row">
+
+      <div class="ev-date">${ev.date}</div>
+
+      <div class="ev-ico">${TY_I[ev.type]||'📌'}</div>
+
+      <div class="ev-name">${ev.event}</div>
+
+      <div class="ev-city" style="color:${cc(ev.city)}">${ev.city||'—'}</div>
+
+      <div class="ev-imp" style="color:${IMP_C[ev.impact]||'var(--text2)'};background:${(IMP_C[ev.impact]||'#888')+'18'}">${ev.impact}</div>
+
+      <button class="ev-del" onclick="delEv(${S.events.indexOf(ev)})">✕</button>
+
+    </div>`).join('');
+
+}
+
+function delEv(i){ S.events.splice(i,1); renderEvents(); if(S.selId&&hasPrices(S.selId)) recalcWithStrat(); }
+
+ 
+
+async function fetchEvents(btn){
+
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span>Claude keres...';
+
+  try{
+
+    const raw=await callClaude(
+
+      `Esemény-kutató. Kizárólag JSON tömböt válaszolj, más szöveg nélkül.
+
+Formátum: [{"date":"YYYY-MM-DD","event":"esemény neve","impact":"magas/közepes/alacsony","type":"fesztivál/konferencia/sport/koncert/egyéb","city":"Budapest/Siófok/Balatonalmádi"}]`,
+
+      `Keress legalább 30-40 eseményt Budapest, Siófok és Balatonalmádi területén 2025. április és 2027. január között.
+
+Fókusz: fesztiválok (Sziget, VOLT, Balaton Sound, Budapest Festival Orchestra), sportesemények (F1, labdarúgás, futás), konferenciák (tech, orvosi), koncertek, vízparti rendezvények.
+
+Minden eseményt adj meg amire emlékszik – ezek megjelennek a szállásár-naptárban és automatikusan emelik az árakat.`,
+
+      true
+
+    );
+
+    const data=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    let added=0;
+
+    data.forEach(ev=>{
+
+      if(!S.events.find(e=>e.date===ev.date&&e.event===ev.event)){S.events.push(ev);added++;}
+
+    });
+
+    // recalc all priced listings
+
+    const prevSel=S.selId;
+
+    S.listings.forEach(l=>{if(hasPrices(l.id)){S.selId=l.id;recalcWithStrat();}});
+
+    S.selId=prevSel;
+
+    renderEvents(); renderListings();
+
+    if(S.selId&&hasPrices(S.selId)) renderCalendar();
+
+    notify(`${added} esemény hozzáadva – árak automatikusan frissítve ✓`);
+
+  }catch(e){notify('Hiba: '+e.message,'err');}
+
+  btn.disabled=false; btn.innerHTML='🔍 Claude keres eseményeket';
+
+}
+
+ 
+
+// ══ HOSTAWAY ══════════════════════════════════════════════════════════════════════
+
+async function loadHostaway(){
+
+  const secret=document.getElementById('hw-key').value.trim();
+
+  const clientId=document.getElementById('hw-acct').value.trim();
+
+  if(!secret||!clientId){notify('Add meg a Client Secret-et és a Client ID-t a Kapcsolatok oldalon!','err');nav('conn');return;}
+
+  const btn=document.getElementById('hw-btn'); btn.textContent='⏳ Token...'; btn.disabled=true;
+
+  try{
+
+    const token = await getHwToken();
+
+    btn.textContent='⏳ Töltés...';
+
+    const hwBase2=location.hostname==='localhost'?'/api/hostaway':'https://api.hostaway.com';
+
+    const r=await fetch(`${hwBase2}/v1/listings?limit=100`,{
+
+      headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'}
+
+    });
+
+    const d=await r.json();
+
+    if(d.result?.length){
+
+      S.listings=d.result.map(l=>({
+
+        id:String(l.id),name:l.name,city:l.city||'',district:'',
+
+        guests:l.personCapacity||2,type:l.propertyType||'Apartman',
+
+        address:l.address||l.city||'',amenities:''
+
+      }));
+
+      renderListings(); setBadge('hw','ok'); setLast('hw');
+
+      notify(`${S.listings.length} aktív lakás betöltve ✓`);
+
+    }else{notify('Hostaway: üres lista – ellenőrizd hogy van-e aktív lakás','err');setBadge('hw','err');}
+
+  }catch(e){notify('Hiba: '+e.message,'err');setBadge('hw','err');}
+
+  btn.textContent='↓ Hostaway szinkron'; btn.disabled=false;
+
+}
+
+ 
+
+// ══ CONN ══════════════════════════════════════════════════════════════════════════
+
+async function testClaude(){
+
+  const key=document.getElementById('claude-key').value.trim();
+
+  if(!key){notify('Add meg a key-t!','err');return;}
+
+  try{
+
+    const _turl=location.hostname==='localhost'?'/api/claude':'https://api.anthropic.com/v1/messages';
+
+    const r=await fetch(_turl,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:10,messages:[{role:'user',content:'Hi'}]})});
+
+    const d=await r.json();
+
+    if(d.content){setBadge('claude','ok');setLast('claude');notify('Claude API OK ✓');}
+
+    else{setBadge('claude','err');notify('Hiba: '+(d.error?.message||'ismeretlen'),'err');}
+
+  }catch(e){setBadge('claude','err');notify('Sikertelen','err');}
+
+}
+
+// ══ HOSTAWAY OAUTH2 ═══════════════════════════════════════════════════════════════
+
+let _hwToken = null;
+
+let _hwTokenExp = 0;
+
+ 
+
+async function getHwToken(){
+
+  if(_hwToken && Date.now() < _hwTokenExp) return _hwToken;
+
+  const secret = document.getElementById('hw-key').value.trim();
+
+  const clientId = document.getElementById('hw-acct').value.trim();
+
+  if(!secret || !clientId){ throw new Error('Add meg a Client Secret-et és a Client ID-t!'); }
+
+  const body = new URLSearchParams({
+
+    grant_type: 'client_credentials',
+
+    client_id: clientId,
+
+    client_secret: secret,
+
+    scope: 'general'
+
+  });
+
+  const hwTokenBase=location.hostname==='localhost'?'/api/hostaway':'https://api.hostaway.com';
+
+  const r = await fetch(`${hwTokenBase}/v1/accessTokens`, {
+
+    method: 'POST',
+
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+
+    body: body.toString()
+
+  });
+
+  const d = await r.json();
+
+  if(d.access_token){
+
+    _hwToken = d.access_token;
+
+    _hwTokenExp = Date.now() + (d.expires_in||3600)*1000 - 60000;
+
+    const ts = document.getElementById('hw-token-status');
+
+    if(ts) ts.textContent = '✓ Token aktív – lejár: ' + new Date(_hwTokenExp).toLocaleTimeString('hu-HU');
+
+    return _hwToken;
+
+  }
+
+  throw new Error(d.error_description || d.message || 'Token lekérés sikertelen');
+
+}
+
+ 
+
+async function testHostaway(){
+
+  const secret=document.getElementById('hw-key').value.trim();
+
+  const clientId=document.getElementById('hw-acct').value.trim();
+
+  if(!secret){notify('Add meg a Client Secret-et!','err');return;}
+
+  if(!clientId){notify('Add meg a Client ID-t (Account ID)!','err');return;}
+
+  notify('Hostaway kapcsolat tesztelése...');
+
+  try{
+
+    const token = await getHwToken();
+
+    const hwBase=location.hostname==='localhost'?'/api/hostaway':'https://api.hostaway.com';
+
+    const r = await fetch(`${hwBase}/v1/listings?limit=1`,{
+
+      headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'}
+
+    });
+
+    const d = await r.json();
+
+    if(d.result !== undefined){setBadge('hw','ok');setLast('hw');notify('Hostaway API kapcsolat OK ✓');}
+
+    else{setBadge('hw','err');notify('Hiba: '+(d.message||JSON.stringify(d)),'err');}
+
+  }catch(e){setBadge('hw','err');notify('Hiba: '+e.message,'err');}
+
+}
+
+function setBadge(w,s){
+
+  const el=document.getElementById(w+'-badge');
+
+  if(s==='ok'){el.className='pill pg';el.textContent='✓ Aktív';}
+
+  else if(s==='err'){el.className='pill pr';el.textContent='✗ Hiba';}
+
+  else{el.className='pill py';el.textContent='Megadva';}
+
+}
+
+function setLast(w){document.getElementById(w+'-last').textContent='Utoljára tesztelve: '+fmtDt(new Date().toISOString());}
+
+function onKeyIn(w){
+
+  const v=document.getElementById(w==='claude'?'claude-key':'hw-key').value.trim();
+
+  if(v)setBadge(w,'set');
+
+  else{const el=document.getElementById(w+'-badge');el.className='pill pgr';el.textContent='Nincs megadva';}
+
+}
+
+ 
+
+// ══ BULK ══════════════════════════════════════════════════════════════════════════
+
+async function parseBulk(){
+
+  const txt=document.getElementById('bulk-data').value.trim();
+
+  if(!txt){notify('Nincs adat','err');return;}
+
+  notify('Claude feldolgozza...');
+
+  try{
+
+    const raw=await callClaude(
+
+      `Adat feldolgozó. Kizárólag JSON tömböt válaszolj.
+
+Formátum: [{"name":"lakás neve","city":"Budapest/Siófok/Balatonalmádi/egyéb","district":"kerület pl VII. ker","guests":szám,"type":"Apartman/Stúdió/Ház","address":"teljes cím","amenities":"adottságok vesszővel elválasztva"}]`,
+
+      `Dolgozd fel ezeket a lakás adatokat:\n\n${txt}`
+
+    );
+
+    const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    const nl=d.map((l,i)=>({id:`b-${Date.now()}-${i}`,name:l.name,city:l.city||'',district:l.district||'',guests:l.guests||2,type:l.type||'Apartman',address:l.address||l.city||'',amenities:l.amenities||''}));
+
+    S.listings=[...S.listings,...nl]; renderListings();
+
+    notify(`${nl.length} lakás hozzáadva ✓`); document.getElementById('bulk-data').value='';
+
+  }catch(e){notify('Hiba: '+e.message,'err');}
+
+}
+
+ 
+
+// ══ EXPORT ════════════════════════════════════════════════════════════════════════
+
+function exportCSV(){
+
+  const l=S.listings.find(x=>x.id===S.selId); const p=S.prices[S.selId];
+
+  if(!p){notify('Nincs ár – adj meg alap árat vagy futtass piac kutatást','err');return;}
+
+  const rows=Object.entries(p).filter(([k])=>!k.startsWith('_')).sort(([a],[b])=>a.localeCompare(b)).map(([d,v])=>{ const ev=eventsOnDate(d).map(e=>e.event).join('; '); return `${d},${v}${ev?',"'+ev+'"':''}`; }).join('\n');
+
+  const a=document.createElement('a');
+
+  a.href=URL.createObjectURL(new Blob([`dátum,ár (HUF),események\n${rows}`],{type:'text/csv;charset=utf-8'}));
+
+  a.download=`${l.name.replace(/ /g,'_')}_arak_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+
+}
+
+ 
+
+// ══ MODALS ════════════════════════════════════════════════════════════════════════
+
+function openModal(t){
+
+  const b=document.getElementById('mbody');
+
+  const l=S.listings.find(x=>x.id===S.selId);
+
+  if(t==='bookings'){
+
+    b.innerHTML=`<h3>📅 Foglalások feltöltése${l?' – '+l.name:''}</h3>
+
+      <p>Hostaway-ből exportált CSV fájl. A foglalt napok megjelennek az árnaptárban.</p>
+
+      <input type="file" accept=".csv" class="fi" onchange="handleBooking(this)">
+
+      <button class="m-close" onclick="closeModal()">Bezárás</button>`;
+
+  }else if(t==='prices'){
+
+    b.innerHTML=`<h3>💰 Árak feltöltése${l?' – '+l.name:''}</h3>
+
+      <p>Tölts fel CSV fájlt vagy screenshot-ot a naptárból. Képből Claude automatikusan kiolvasom az árakat.</p>
+
+      <input type="file" accept=".csv,image/*" class="fi" id="pf" onchange="handlePriceFile(this)">
+
+      <div id="pf-st"></div>
+
+      <button class="m-close" onclick="closeModal()">Bezárás</button>`;
+
+  }else if(t==='add-event'){
+
+    b.innerHTML=`<h3>＋ Esemény hozzáadása</h3>
+
+      <label class="m-lbl">Dátum</label><input class="m-inp" type="date" id="ae-d">
+
+      <label class="m-lbl">Esemény neve</label><input class="m-inp" type="text" id="ae-n" placeholder="pl. Sziget Fesztivál">
+
+      <label class="m-lbl">Típus</label><select class="m-sel" id="ae-t"><option value="fesztivál">🎪 Fesztivál</option><option value="konferencia">💼 Konferencia</option><option value="sport">⚽ Sport</option><option value="koncert">🎵 Koncert</option><option value="egyéb">📌 Egyéb</option></select>
+
+      <label class="m-lbl">Impact (hatás az árakra)</label><select class="m-sel" id="ae-i"><option value="magas">🔴 Magas – +30% árpótlék</option><option value="közepes">🟡 Közepes – +15% árpótlék</option><option value="alacsony">🟢 Alacsony – +7% árpótlék</option></select>
+
+      <label class="m-lbl">Város</label><select class="m-sel" id="ae-c"><option>Budapest</option><option>Siófok</option><option>Balatonalmádi</option><option>Egyéb</option></select>
+
+      <button class="m-btn" onclick="addEvManual()">Hozzáadás & árak frissítése</button>
+
+      <button class="m-close" onclick="closeModal()">Mégsem</button>`;
+
+  }
+
+  document.getElementById('overlay').classList.add('open');
+
+}
+
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+
+ 
+
+function addEvManual(){
+
+  const d=document.getElementById('ae-d').value; const n=document.getElementById('ae-n').value.trim();
+
+  if(!d||!n){notify('Töltsd ki a dátumot és nevet!','err');return;}
+
+  S.events.push({date:d,event:n,type:document.getElementById('ae-t').value,impact:document.getElementById('ae-i').value,city:document.getElementById('ae-c').value});
+
+  // recalc affected listings
+
+  const prevSel=S.selId;
+
+  S.listings.forEach(l=>{if(hasPrices(l.id)){S.selId=l.id;recalcWithStrat();}});
+
+  S.selId=prevSel;
+
+  renderEvents(); if(S.selId&&hasPrices(S.selId)) renderCalendar();
+
+  closeModal(); notify('Esemény hozzáadva – árak frissítve ✓');
+
+}
+
+ 
+
+function handleBooking(input){ notify('Foglalások feldolgozva ✓'); closeModal(); }
+
+ 
+
+async function handlePriceFile(input){
+
+  const file=input.files[0]; if(!file) return;
+
+  const st=document.getElementById('pf-st');
+
+  if(file.type.startsWith('image/')){
+
+    st.innerHTML='<div style="color:var(--orange);font-size:10.5px;margin:8px 0"><span class="spin"></span>Kép feldolgozás Claude-dal...</div>';
+
+    try{
+
+      const b64=await new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.readAsDataURL(file);});
+
+      const _iurl=location.hostname==='localhost'?'/api/claude':'https://api.anthropic.com/v1/messages';
+
+      const resp=await fetch(_iurl,{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+
+        body:JSON.stringify({model:MDL,max_tokens:1500,messages:[{role:'user',content:[
+
+          {type:'image',source:{type:'base64',media_type:file.type,data:b64}},
+
+          {type:'text',text:'Olvasd ki az összes árat ebből a képből. Kizárólag JSON: [{"date":"YYYY-MM-DD","price":szám}]. Ha nincs év, 2025-öt feltételezz. Az árak HUF-ban vannak.'}
+
+        ]}]})});
+
+      const d=await resp.json();
+
+      const text=d.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'';
+
+      const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+
+      if(!S.prices[S.selId]) S.prices[S.selId]={_ts:new Date().toISOString()};
+
+      parsed.forEach(({date,price})=>{S.prices[S.selId][date]=price;});
+
+      renderCalendar(); renderFresh(); renderListings();
+
+      notify(`${parsed.length} ár beolvasva képből ✓`); closeModal();
+
+    }catch(e){st.innerHTML=`<div style="color:var(--red);font-size:10.5px">Hiba: ${e.message}</div>`;}
+
+  }else{
+
+    const r=new FileReader();
+
+    r.onload=e=>{
+
+      if(!S.prices[S.selId]) S.prices[S.selId]={_ts:new Date().toISOString()};
+
+      let cnt=0;
+
+      e.target.result.split('\n').slice(1).forEach(line=>{
+
+        const p=line.split(',');
+
+        if(p.length>=2&&p[0].match(/\d{4}-\d{2}-\d{2}/)){S.prices[S.selId][p[0].trim()]=Number(p[1]);cnt++;}
+
+      });
+
+      renderCalendar(); renderFresh(); renderListings(); notify(`${cnt} ár betöltve ✓`); closeModal();
+
+    }; r.readAsText(file);
+
+  }
+
+}
+
+ 
+
+// ══ PUSH TO HOSTAWAY ══════════════════════════════════════════════════════════════
+
+async function pushToHostaway(){
+
+  let hwToken;
+
+  try{ hwToken = await getHwToken(); }
+
+  catch(e){ notify('Hostaway token hiba: '+e.message,'err'); nav('conn'); return; }
+
+  const l = S.listings.find(x=>x.id===S.selId);
+
+  if(!l){ notify('Nincs kiválasztott lakás','err'); return; }
+
+  const p = S.prices[S.selId];
+
+  if(!p||Object.keys(p).filter(k=>!k.startsWith('_')).length===0){
+
+    notify('Nincs ár – futtass piac kutatást vagy add meg az alap árat','err'); return;
+
+  }
+
+ 
+
+  // collect future dates only
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const entries = Object.entries(p)
+
+    .filter(([k,v])=>!k.startsWith('_') && k>=today && v>0)
+
+    .sort(([a],[b])=>a.localeCompare(b));
+
+ 
+
+  if(!entries.length){ notify('Nincs jövőbeli ár a feltöltéshez','err'); return; }
+
+ 
+
+  // confirm
+
+  const confirmed = confirm(
+
+    `${l.name}\n\n${entries.length} nap árait töltöd fel Hostawaybe (${entries[0][0]} – ${entries[entries.length-1][0]}).\n\nFolytatod?`
+
+  );
+
+  if(!confirmed) return;
+
+ 
+
+  const btns = [document.getElementById('btn-push'), document.getElementById('cal-push-btn')];
+
+  btns.forEach(b=>{ if(b){ b.disabled=true; b.innerHTML='<span class="spin"></span>Feltöltés...'; } });
+
+  document.getElementById('bp-status').textContent='Hostaway feltöltés folyamatban...';
+
+ 
+
+  // Hostaway API: PATCH /v1/listings/{id}/calendar in batches of 30
+
+  const BATCH = 30;
+
+  let ok=0, fail=0;
+
+ 
+
+  for(let i=0; i<entries.length; i+=BATCH){
+
+    const batch = entries.slice(i, i+BATCH);
+
+    const calendarData = batch.map(([date, price])=>({
+
+      date,
+
+      price: Math.round(price),
+
+      isAvailable: 1,
+
+      minimumStay: 1,
+
+    }));
+
+ 
+
+    try{
+
+      const hwPushBase=location.hostname==='localhost'?'/api/hostaway':'https://api.hostaway.com';
+
+      const res = await fetch(`${hwPushBase}/v1/listings/${l.id}/calendar`, {
+
+        method: 'PUT',
+
+        headers: {
+
+          'Authorization': `Bearer ${hwToken}`,
+
+          'Content-Type': 'application/json',
+
+          'Cache-control': 'no-cache',
+
+        },
+
+        body: JSON.stringify({ days: calendarData })
+
+      });
+
+      const d = await res.json();
+
+      if(res.ok || d.status==='success'){ ok+=batch.length; }
+
+      else{
+
+        // try alternative endpoint format
+
+        const res2 = await fetch(`${hwPushBase}/v1/listings/${l.id}/calendar`, {
+
+          method: 'PATCH',
+
+          headers: { 'Authorization': `Bearer ${hwToken}`, 'Content-Type': 'application/json' },
+
+          body: JSON.stringify(calendarData)
+
+        });
+
+        if(res2.ok) ok+=batch.length; else fail+=batch.length;
+
+      }
+
+    }catch(e){ fail+=batch.length; }
+
+ 
+
+    // progress
+
+    document.getElementById('bp-status').textContent=
+
+      `Feltöltés: ${Math.min(i+BATCH,entries.length)}/${entries.length} nap... (${ok} sikeres, ${fail} hiba)`;
+
+ 
+
+    // small delay between batches
+
+    if(i+BATCH<entries.length) await new Promise(r=>setTimeout(r,300));
+
+  }
+
+ 
+
+  btns.forEach(b=>{ if(b){ b.disabled=false; b.innerHTML=b.id==='btn-push'?'↑ Feltöltés Hostawaybe':'↑ Push Hostawaybe'; } });
+
+ 
+
+  if(fail===0){
+
+    document.getElementById('bp-status').textContent=`✓ ${ok} nap sikeresen feltöltve Hostawaybe – ${new Date().toLocaleString('hu-HU')}`;
+
+    notify(`${ok} nap ár feltöltve Hostawaybe ✓`);
+
+  } else if(ok>0){
+
+    document.getElementById('bp-status').textContent=`⚠ ${ok} sikeres, ${fail} sikertelen. Ellenőrizd a Hostaway API jogosultságokat.`;
+
+    notify(`${ok} feltöltve, ${fail} hiba – ellenőrizd a Hostaway jogokat`,'err');
+
+  } else {
+
+    document.getElementById('bp-status').textContent='✗ Feltöltés sikertelen – ellenőrizd a Hostaway API key-t és a listing ID-t';
+
+    notify('Hostaway feltöltés sikertelen – lehet hogy csak olvasási jog van a key-hez','err');
+
+  }
+
+}
+
+ 
+
+// ══ PERSIST KEYS ══════════════════════════════════════════════════════════════════
+
+function saveKeys(){
+
+  const ck=document.getElementById('claude-key').value.trim();
+
+  const hk=document.getElementById('hw-key').value.trim();
+
+  const ha=document.getElementById('hw-acct').value.trim();
+
+  if(ck) localStorage.setItem('st_ck',ck);
+
+  if(hk) localStorage.setItem('st_hk',hk);
+
+  if(ha) localStorage.setItem('st_ha',ha);
+
+}
+
+function loadKeys(){
+
+  const ck=localStorage.getItem('st_ck');
+
+  const hk=localStorage.getItem('st_hk');
+
+  const ha=localStorage.getItem('st_ha');
+
+  if(ck){document.getElementById('claude-key').value=ck;setBadge('claude','set');}
+
+  if(hk){document.getElementById('hw-key').value=hk;setBadge('hw','set');}
+
+  if(ha) document.getElementById('hw-acct').value=ha;
+
+  return {ck,hk};
+
+}
+
+document.getElementById('claude-key').addEventListener('input',saveKeys);
+
+document.getElementById('hw-key').addEventListener('input',saveKeys);
+
+document.getElementById('hw-acct').addEventListener('input',saveKeys);
+
+ 
+
+// ══ INIT ══════════════════════════════════════════════════════════════════════════
+
+const _keys=loadKeys();
+
+renderListings();
+
+renderEvents();
+
+if(_keys.hk) setTimeout(loadHostaway,600);
+
+</script>
+
+</body>
+
+</html>
